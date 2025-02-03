@@ -1,0 +1,27 @@
+created:
+    - database/factories/PartnerFactory.php
+    - database/factories/CompanyFactory.php
+    - database/factories/WeddingFactory.php
+    - database/factories/LocationFactory.php
+    - database/factories/GuestFactory.php
+    - database/factories/ChildFactory.php
+    - database/migrations/2025_02_03_092559_create_partners_table.php
+    - database/migrations/2025_02_03_092600_create_companies_table.php
+    - database/migrations/2025_02_03_092601_create_weddings_table.php
+    - database/migrations/2025_02_03_092602_create_locations_table.php
+    - database/migrations/2025_02_03_092603_create_guests_table.php
+    - database/migrations/2025_02_03_092604_create_children_table.php
+    - database/migrations/2025_02_03_092605_create_location_wedding_table.php
+    - app/Models/Partner.php
+    - app/Models/Company.php
+    - app/Models/Wedding.php
+    - app/Models/Location.php
+    - app/Models/Guest.php
+    - app/Models/Child.php
+models:
+    Partner: { Name: 'string:400', First_Surname: 'string:400', Second_Surname: 'string:400', relationships: { hasOne: user } }
+    Company: { Comercial_Name: 'varchar:255', Description: text, Business_Type: 'varchar:255', relationships: { hasOne: user } }
+    Wedding: { Ceremony_Start_Time: time, Lunch_Start_Time: time, Dinner_Start_Time: time, Party_Start_Time: time, Party_Finish_Time: time, Dress_Code: 'enum:etiqueta, semi_formal, casual, cóctel, formal, playa, fiesta_jardín, masculino, femenino, mixto', Wedding_Date: date, Music: 'varchar:255', relationships: { hasOne: Partner, hasMany: Guest, belongsToMany: Location } }
+    Location: { Population: 'string:400', Postal_Code: integer, City: 'string:400', Country: 'string:400', relationships: { belongsToMany: Wedding } }
+    Guest: { Name: 'string:400', First_Surname: 'string:400', Second_Surname: 'string:400', Extra_Information: text, Allergy: text, Feeding: 'string:400', relationships: { belongsTo: Weeding, hasMany: Child } }
+    Child: { Name: 'string:400', First_Surname: 'string:400', Second_Surname: 'string:400', relationships: { belongsTo: Guest } }

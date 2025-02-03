@@ -1,0 +1,54 @@
+models:
+  Partner:
+    Name: string:400
+    First_Surname: string:400
+    Second_Surname: string:400
+    relationships:
+      hasOne: user
+
+  Company:
+    Comercial_Name: varchar:255
+    Description: text
+    Business_Type: varchar:255
+    relationships:
+      hasOne: user
+
+  Wedding:
+    Ceremony_Start_Time: time
+    Lunch_Start_Time: time
+    Dinner_Start_Time: time
+    Party_Start_Time: time
+    Party_Finish_Time: time
+    Dress_Code: enum:etiqueta, semi_formal, casual, cóctel, formal, playa, fiesta_jardín, masculino, femenino, mixto
+    Wedding_Date: date
+    Music: varchar:255
+    relationships:
+      hasOne: Partner
+      hasMany: Guest
+      belongsToMany: Location
+
+  Location:
+    Population: string:400
+    Postal_Code: integer
+    City: string:400
+    Country: string:400
+    relationships:
+      belongsToMany: Wedding
+
+  Guest:
+    Name: string:400
+    First_Surname: string:400
+    Second_Surname: string:400
+    Extra_Information: text
+    Allergy: text
+    Feeding: string:400
+    relationships:
+      belongsTo: Weeding
+      hasMany: Child
+
+  Child:
+    Name: string:400
+    First_Surname: string:400
+    Second_Surname: string:400
+    relationships:
+      belongsTo: Guest
