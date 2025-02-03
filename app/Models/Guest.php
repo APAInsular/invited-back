@@ -41,8 +41,8 @@ class Guest extends Model
         return $this->belongsTo(Weeding::class);
     }
 
-    public function children(): HasMany
+    public function attendants(): HasMany
     {
-        return $this->hasMany(Child::class);
+        return $this->hasMany(Attendant::class);
     }
 }

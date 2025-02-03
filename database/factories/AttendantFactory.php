@@ -4,17 +4,17 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Child;
+use App\Models\Attendant;
 use App\Models\Guest;
 
-class ChildFactory extends Factory
+class AttendantFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Child::class;
+    protected $model = Attendant::class;
 
     /**
      * Define the model's default state.
