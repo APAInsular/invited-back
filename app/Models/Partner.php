@@ -19,6 +19,7 @@ class Partner extends Model
         'Name',
         'First_Surname',
         'Second_Surname',
+        'user_id',
     ];
 
     /**

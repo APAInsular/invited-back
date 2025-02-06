@@ -20,11 +20,18 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/couples', [RegisteredUserController::class, 'storeCouple']);
 
 // Rutas de autenticación
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
+
+Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas
+Route::post('/users', [RegisteredUserController::class, 'store']); // Crear un usuario con su pareja
+Route::get('/users/{id}', [RegisteredUserController::class, 'show']); // Obtener un usuario por ID
+Route::put('/users/{id}', [RegisteredUserController::class, 'update']); // Actualizar un usuario y su pareja
+Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']); // Eliminar un usuario y su pareja
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth:sanctum'])->group(function () {
