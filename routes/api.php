@@ -24,7 +24,7 @@ Route::post('/couples', [RegisteredUserController::class, 'storeCouple']);
 
 // Rutas de autenticación
 Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('login', [AuthenticatedSessionController::class, 'login']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
 
 Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas

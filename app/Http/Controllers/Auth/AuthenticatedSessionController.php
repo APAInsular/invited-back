@@ -9,24 +9,34 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function store(Request $request)
+    public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        // Validamos los datos de entrada (correo y contraseña)
+        $request->validate([
+            'Email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        // Intentamos autenticar al usuario con las credenciales proporcionadas
+        if (Auth::attempt(['email' => $request->Email, 'password' => $request->password])) {
+            // Si la autenticación fue exitosa, obtenemos el usuario
+            $user = Auth::user();
+
+            // Si estás usando Laravel Sanctum o Passport, puedes generar un token aquí
+            $token = $user->createToken('TokenName')->plainTextToken; // Si usas Sanctum
+
+            // Retornar respuesta con el usuario y el token (si es necesario)
+            return response()->json([
+                'message' => 'Inicio de sesión exitoso',
+                'user' => $user,
+                'token' => $token,  // Solo si usas Sanctum o Passport
+            ], 200);
+        } else {
+            // Si las credenciales no son correctas, devolver un error
+            return response()->json([
+                'error' => 'Credenciales incorrectas',
+            ], 401);
         }
-
-        $user = Auth::user();
-
-        return response()->json([
-            'message' => 'Inicio de sesión exitoso',
-            'token' => $user->createToken('auth_token')->plainTextToken,
-            'roles' => $user->getRoleNames()
-        ]);
     }
 
     public function destroy(Request $request)
