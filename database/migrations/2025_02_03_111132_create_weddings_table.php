@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('partner_id'); // Pareja del usuario
             $table->string(column:'user_name');
             $table->string(column:'partner_name');
-            $table->enum('Dress_Code', ["etiqueta",""]);
+            $table->string('Dress_Code');
             $table->date('Wedding_Date');
             $table->string('Music');
             $table->timestamps();

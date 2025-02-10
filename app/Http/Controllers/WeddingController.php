@@ -47,6 +47,8 @@ class WeddingController extends Controller
             $wedding = Wedding::create([
                 'user_id' => $user->id,
                 'partner_id' => $partner->id,
+                'user_name' => $user->Name,
+                'partner_name' => $partner->Name,
                 'Dress_Code' => $request->Dress_Code,
                 'Wedding_Date' => $request->Wedding_Date,
                 'Music' => $request->Music,
