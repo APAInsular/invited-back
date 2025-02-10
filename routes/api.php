@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +38,8 @@ Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']); // E
 // Rutas protegidas por autenticación
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
-        return response()->json($request->user());
+        return response()->json(User::with('partner')->get(), 200);
+
     });
 
     // Rutas protegidas por rol
