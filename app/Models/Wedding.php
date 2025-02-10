@@ -18,11 +18,13 @@ class Wedding extends Model
      * @var array
      */
     protected $fillable = [
-        'Ceremony_Start_Time',
-        'Lunch_Start_Time',
-        'Dinner_Start_Time',
-        'Party_Start_Time',
-        'Party_Finish_Time',
+        // 'Ceremony_Start_Time',
+        // 'Lunch_Start_Time',
+        // 'Dinner_Start_Time',
+        // 'Party_Start_Time',
+        // 'Party_Finish_Time',
+        'user_id',
+        'partner_id',
         'Dress_Code',
         'Wedding_Date',
         'Music',
@@ -51,5 +53,9 @@ class Wedding extends Model
     public function locations(): BelongsToMany
     {
         return $this->belongsToMany(Location::class);
+    }
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 }

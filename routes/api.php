@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\WeddingController;
 
 
 /*
@@ -34,6 +35,17 @@ Route::post('/users', [RegisteredUserController::class, 'store']); // Crear un u
 Route::get('/users/{id}', [RegisteredUserController::class, 'show']); // Obtener un usuario por ID
 Route::put('/users/{id}', [RegisteredUserController::class, 'update']); // Actualizar un usuario y su pareja
 Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']); // Eliminar un usuario y su pareja
+
+
+// CRUD de bodas y eventos
+Route::get('/weddings', [WeddingController::class, 'index']); // Listar todas las bodas
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/weddings', [WeddingController::class, 'store']);
+});
+Route::get('/weddings/{id}', [WeddingController::class, 'show']); // Ver una boda específica
+Route::put('/weddings/{id}', [WeddingController::class, 'update']); // Actualizar boda
+Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Eliminar boda y eventos
+
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth:sanctum'])->group(function () {
