@@ -58,7 +58,16 @@ class RegisteredUserController extends Controller
                 'user_id' => $user->id, // Llave foránea conectando con la tabla users
             ]);
 
-            Auth::login($user);
+            // Auth::login($user);
+            Auth::attempt(['Email' => $request->Email, 'password' => $request->password]);
+            //Si entra en el 200
+            // if (Auth::check()) {
+            //     return response()->json(['message' => 'Usuario autenticado correctamente'], 200); 
+            // } else {
+            //     return response()->json(['error' => 'Autenticación fallida'], 401);
+            // }
+            
+
 
             // Si usas Laravel Sanctum o Passport, generamos un token de acceso
             $token = $user->createToken('TokenName')->plainTextToken; // Si usas Sanctum
