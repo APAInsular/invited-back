@@ -20,7 +20,8 @@ return new class extends Migration
             // $table->time('Party_Finish_Time');
             $table->unsignedBigInteger('user_id'); // Usuario que se casa
             $table->unsignedBigInteger('partner_id'); // Pareja del usuario
-
+            $table->string(column:'user_name');
+            $table->string(column:'partner_name');
             $table->enum('Dress_Code', ["etiqueta",""]);
             $table->date('Wedding_Date');
             $table->string('Music');

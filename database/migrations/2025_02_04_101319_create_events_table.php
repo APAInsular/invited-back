@@ -9,11 +9,11 @@ return new class extends Migration {
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('name');
             $table->unsignedBigInteger('wedding_id'); // Definir la columna antes de la clave foránea
-            $table->text('descripcion')->nullable();
-            $table->time('hora');
-            $table->string('ubicacion')->nullable();
+            $table->text('description')->nullable();
+            $table->time('time');
+            $table->string('location')->nullable();
             $table->timestamps();
             $table->foreign('wedding_id')->references('id')->on('weddings')->onDelete('cascade');
 

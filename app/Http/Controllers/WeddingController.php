@@ -35,10 +35,10 @@ class WeddingController extends Controller
             'Wedding_Date' => ['required', 'date'],
             'Music' => ['required', 'string', 'max:255'],
             'events' => ['required', 'array'],
-            'events.*.nombre' => ['required', 'string', 'max:255'],
-            'events.*.descripcion' => ['nullable', 'string'],
-            'events.*.hora' => ['required', 'date_format:H:i'],
-            'events.*.ubicacion' => ['nullable', 'string', 'max:255'],
+            'events.*.name' => ['required', 'string', 'max:255'],
+            'events.*.description' => ['nullable', 'string'],
+            'events.*.time' => ['required', 'date_format:H:i'],
+            'events.*.location' => ['nullable', 'string', 'max:255'],
         ]);
     
         DB::beginTransaction();
@@ -55,10 +55,10 @@ class WeddingController extends Controller
             // Crear los eventos asociados a la boda
             foreach ($request->events as $eventData) {
                 Event::create([
-                    'nombre' => $eventData['nombre'],
-                    'descripcion' => $eventData['descripcion'] ?? null,
-                    'hora' => $eventData['hora'],
-                    'ubicacion' => $eventData['ubicacion'] ?? null,
+                    'name' => $eventData['name'],
+                    'description' => $eventData['description'] ?? null,
+                    'time' => $eventData['time'],
+                    'location' => $eventData['location'] ?? null,
                     'wedding_id' => $wedding->id,
                 ]);
             }

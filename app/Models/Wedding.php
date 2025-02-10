@@ -25,6 +25,8 @@ class Wedding extends Model
         // 'Party_Finish_Time',
         'user_id',
         'partner_id',
+        'user_name',
+        'partner_name',
         'Dress_Code',
         'Wedding_Date',
         'Music',

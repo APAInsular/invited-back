@@ -11,7 +11,7 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'wedding_id', 'nombre', 'descripcion', 'fecha', 'hora', 'ubicacion', 'estado'
+        'wedding_id', 'name', 'description', 'fecha', 'time', 'location', 'estado'
     ];
 
     public function boda()
