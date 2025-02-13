@@ -18,16 +18,16 @@ class WeddingController extends Controller
 
     public function store(Request $request)
     {
-        $user = Auth::user(); // Obtener el usuario autenticado
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
-        }
+        // $user = Auth::user(); // Obtener el usuario autenticado
+        // if (!$user) {
+        //     return response()->json(['error' => 'Usuario no autenticado'], 401);
+        // }
 
-        // Obtener el partner asociado
-        $partner = $user->partner;
-        if (!$partner) {
-            return response()->json(['error' => 'No se encontró pareja asociada al usuario'], 404);
-        }
+        // // Obtener el partner asociado
+        // $partner = $user->partner;
+        // if (!$partner) {
+        //     return response()->json(['error' => 'No se encontró pareja asociada al usuario'], 404);
+        // }
 
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
@@ -49,10 +49,10 @@ class WeddingController extends Controller
         try {
             // Crear la boda con los IDs obtenidos automáticamente
             $wedding = Wedding::create([
-                'user_id' => $user->id,
-                'partner_id' => $partner->id,
-                'user_name' => $user->Name,
-                'partner_name' => $partner->Name,
+                // 'user_id' => $user->id,
+                // 'partner_id' => $partner->id,
+                // 'user_name' => $user->Name,
+                // 'partner_name' => $partner->Name,
                 'Dress_Code' => $request->Dress_Code,
                 'Wedding_Date' => $request->Wedding_Date,
                 'Music' => $request->Music,

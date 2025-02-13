@@ -18,10 +18,10 @@ return new class extends Migration
             // $table->time('Dinner_Start_Time');
             // $table->time('Party_Start_Time');
             // $table->time('Party_Finish_Time');
-            $table->unsignedBigInteger('user_id'); // Usuario que se casa
-            $table->unsignedBigInteger('partner_id'); // Pareja del usuario
-            $table->string(column:'user_name');
-            $table->string(column:'partner_name');
+            // $table->unsignedBigInteger('user_id'); // Usuario que se casa
+            // $table->unsignedBigInteger('partner_id'); // Pareja del usuario
+            // $table->string(column:'user_name');
+            // $table->string(column:'partner_name');
             $table->string('Dress_Code');
             $table->date('Wedding_Date');
             $table->string('Music');
@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string(column:'template');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
+            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
 
         });
     }
