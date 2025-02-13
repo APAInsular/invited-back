@@ -30,6 +30,10 @@ class Wedding extends Model
         'Dress_Code',
         'Wedding_Date',
         'Music',
+        'foodType',
+        "customMessage",
+        "template",
+        "guestCount"
     ];
 
     /**

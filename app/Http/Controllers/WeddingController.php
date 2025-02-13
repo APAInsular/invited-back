@@ -22,25 +22,29 @@ class WeddingController extends Controller
         if (!$user) {
             return response()->json(['error' => 'Usuario no autenticado'], 401);
         }
-    
+
         // Obtener el partner asociado
         $partner = $user->partner;
         if (!$partner) {
             return response()->json(['error' => 'No se encontró pareja asociada al usuario'], 404);
         }
-    
+
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
             'Dress_Code' => ['required', 'string', 'max:255'],
             'Wedding_Date' => ['required', 'date'],
             'Music' => ['required', 'string', 'max:255'],
+            'foodType' => ['required', 'string', 'max:255'],
+            'template' => ['required', 'string', 'max:255'],
+            'guestCount' => ['required', 'string', 'max:255'],
+            'customMessage' => ['required', 'string', 'max:255'],
             'events' => ['required', 'array'],
             'events.*.name' => ['required', 'string', 'max:255'],
             'events.*.description' => ['nullable', 'string'],
             'events.*.time' => ['required', 'date_format:H:i'],
             'events.*.location' => ['nullable', 'string', 'max:255'],
         ]);
-    
+
         DB::beginTransaction();
         try {
             // Crear la boda con los IDs obtenidos automáticamente
@@ -52,8 +56,12 @@ class WeddingController extends Controller
                 'Dress_Code' => $request->Dress_Code,
                 'Wedding_Date' => $request->Wedding_Date,
                 'Music' => $request->Music,
+                'guestCount' => $request->guestCount,
+                'template' => $request->template,
+                'foodType' => $request->foodType,
+                'customMessage'=> $request->customMessage,
             ]);
-    
+
             // Crear los eventos asociados a la boda
             foreach ($request->events as $eventData) {
                 Event::create([
@@ -64,7 +72,7 @@ class WeddingController extends Controller
                     'wedding_id' => $wedding->id,
                 ]);
             }
-    
+
             DB::commit();
             return response()->json([
                 'message' => 'Boda y eventos creados correctamente',
@@ -78,7 +86,7 @@ class WeddingController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function show($id)
     {

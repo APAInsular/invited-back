@@ -25,6 +25,10 @@ return new class extends Migration
             $table->string('Dress_Code');
             $table->date('Wedding_Date');
             $table->string('Music');
+            $table->string('customMessage');
+            $table->string(column:'foodType');
+            $table->integer(column:'guestCount');
+            $table->string(column:'template');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
