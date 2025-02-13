@@ -27,11 +27,12 @@ class WeddingController extends Controller
         // $partner = $user->partner;
         // if (!$partner) {
         //     return response()->json(['error' => 'No se encontró pareja asociada al usuario'], 404);
-        // }
+        // }+
 
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
             'Dress_Code' => ['required', 'string', 'max:255'],
+            'user_id'=>['required','integer'],
             'Wedding_Date' => ['required', 'date'],
             'Music' => ['required', 'string', 'max:255'],
             'foodType' => ['required', 'string', 'max:255'],
@@ -49,7 +50,7 @@ class WeddingController extends Controller
         try {
             // Crear la boda con los IDs obtenidos automáticamente
             $wedding = Wedding::create([
-                // 'user_id' => $user->id,
+                'user_id' => $request->user_id,
                 // 'partner_id' => $partner->id,
                 // 'user_name' => $user->Name,
                 // 'partner_name' => $partner->Name,
