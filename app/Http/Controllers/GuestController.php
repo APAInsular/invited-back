@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendant;
 use Illuminate\Http\Request;
 use App\Models\Guest;
 use DB;
@@ -16,19 +17,26 @@ class GuestController extends Controller
 
     public function store(Request $request)
     {
-        // Validar los datos de entrada
+        // Validar los datos principales
         $request->validate([
-            'Name' => ['required','string','max:400'],
-            'First_Surname' => ['required','string','max:400'],
-            'Second_Surname' => ['required','string','max:400'],
-            'Extra_Information' => ['nullable','string'],
-            'Allergy' => ['nullable','string'],
-            'Feeding' => ['nullable','string','max:400'],
-            'wedding_id' => ['required','exists:weddings,id']
+            'Name' => ['required', 'string', 'max:400'],
+            'First_Surname' => ['required', 'string', 'max:400'],
+            'Second_Surname' => ['required', 'string', 'max:400'],
+            'Extra_Information' => ['nullable', 'string'],
+            'Allergy' => ['nullable', 'string'],
+            'Feeding' => ['nullable', 'string', 'max:400'],
+            'wedding_id' => ['required', 'exists:weddings,id'],
+            'attendants' => ['required', 'array'],
+            'attendants.*.Name' => ['required', 'string', 'max:255'],
+            'attendants.*.First_Surname' => ['nullable', 'string'],
+            'attendants.*.Second_Surname' => ['nullable', 'string'],
+            'attendants.*.age' => ['nullable', 'integer'],
         ]);
-    
+
+
+        DB::beginTransaction(); // Iniciar transacción
         try {
-            // Crear el invitado en la BD
+            // Crear el Guest
             $guest = Guest::create([
                 'Name' => $request->Name,
                 'First_Surname' => $request->First_Surname,
@@ -38,23 +46,39 @@ class GuestController extends Controller
                 'Feeding' => $request->Feeding,
                 'wedding_id' => $request->wedding_id
             ]);
-    
-            // Retornar la respuesta JSON con código 201 (creado)
-            DB::commit();
+
+
+            foreach ($request->attendants as $attendant) {
+                Attendant::create([
+                    'Name' => $attendant['Name'],
+                    'First_Surname' => $attendant['First_Surname'],
+                    'Second_Surname' => $attendant['Second_Surname'],
+                    'age' => $attendant['age'],
+                    'guest_id' => $guest->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+
+            DB::commit(); // Guardar en la BD
+
             return response()->json([
-                'message' => 'Invitado creado exitosamente',
-                'guest' => $guest
+                'message' => 'Invitado y acompañantes creados exitosamente',
+                'guest' => $guest->load('attendants'),
+                // 'attendants' => $attendantsData
             ], 201);
-            
+
         } catch (\Exception $e) {
-            // Capturar cualquier error y devolverlo en JSON
+            DB::rollBack(); // Revertir cambios si hay un error
+
             return response()->json([
-                'error' => 'Error al crear el invitado',
+                'error' => 'Error al guardar el invitado y sus acompañantes',
                 'details' => $e->getMessage()
             ], 500);
         }
     }
-    
+
 
     public function show($id)
     {
