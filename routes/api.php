@@ -67,3 +67,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
     });
 });
+
+use App\Http\Controllers\GuestController;
+use App\Http\Controllers\AttendantController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Rutas para Guests
+    Route::get('/guests', [GuestController::class, 'index']);
+    Route::post('/guests', [GuestController::class, 'store']);
+    Route::get('/guests/{id}', [GuestController::class, 'show']);
+    Route::put('/guests/{id}', [GuestController::class, 'update']);
+    Route::delete('/guests/{id}', [GuestController::class, 'destroy']);
+
+    // Rutas para Attendants
+    Route::get('/attendants', [AttendantController::class, 'index']);
+    Route::post('/attendants', [AttendantController::class, 'store']);
+    Route::get('/attendants/{id}', [AttendantController::class, 'show']);
+    Route::put('/attendants/{id}', [AttendantController::class, 'update']);
+    Route::delete('/attendants/{id}', [AttendantController::class, 'destroy']);
+});
+
