@@ -15,6 +15,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             UsersSeeder::class, // Seeder para crear usuarios con roles asignados
+            WeddingsSeeder::class,
+            EventsSeeder::class,
+            GuestsSeeder::class,
+            AttendantsSeeder::class,
         ]);
     }
 }
