@@ -18,7 +18,7 @@ use Spatie\Permission\Models\Role;
 class RegisteredUserController extends Controller
 {
 
- 
+
 
     public function index()
     {
@@ -36,6 +36,7 @@ class RegisteredUserController extends Controller
             'Partner_Name' => ['required', 'string', 'max:255'],
             'Partner_First_Surname' => ['required', 'string', 'max:255'],
             'Partner_Second_Surname' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'string', 'exists:roles,name'], // Validamos contra la BD
         ]);
 
         DB::beginTransaction();
@@ -50,42 +51,38 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            // Crear partner con un nombre y apellidos diferentes
+            // Asignar rol con Spatie
+            $user->assignRole($request->role);
+
+            // Crear pareja asociada
             $partner = Partner::create([
                 'Name' => $request->Partner_Name,
                 'First_Surname' => $request->Partner_First_Surname,
                 'Second_Surname' => $request->Partner_Second_Surname,
-                'user_id' => $user->id, // Llave foránea conectando con la tabla users
+                'user_id' => $user->id,
             ]);
 
-            // Auth::login($user);
-            Auth::attempt(['Email' => $request->Email, 'password' => $request->password]);
-            //Si entra en el 200
-            // if (Auth::check()) {
-            //     return response()->json(['message' => 'Usuario autenticado correctamente'], 200); 
-            // } else {
-            //     return response()->json(['error' => 'Autenticación fallida'], 401);
-            // }
-            
+            // Generar token (si usas Sanctum)
+            $token = $user->createToken('AuthToken')->plainTextToken;
 
-
-            // Si usas Laravel Sanctum o Passport, generamos un token de acceso
-            $token = $user->createToken('TokenName')->plainTextToken; // Si usas Sanctum
-            // $token = $user->createToken('TokenName', ['role:admin'])->plainTextToken; // Si necesitas roles o permisos
-
-            // Devolver la respuesta con el usuario, el mensaje y el token
             DB::commit();
+
             return response()->json([
                 'message' => 'Usuario y Partner creados correctamente',
-                'user' => $user,
-                'token' => $token,  // Solo si estás usando tokens (Sanctum o Passport)
+                'user' => $user->load('roles'), // Cargar roles en la respuesta
+                'token' => $token,
             ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Error al crear los registros', 'details' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Error al crear los registros',
+                'details' => $e->getMessage(),
+            ], 500);
         }
     }
+
+
     public function show($id)
     {
         $user = User::with('partner')->find($id);

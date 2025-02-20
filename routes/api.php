@@ -50,8 +50,13 @@ Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Elimi
 // Rutas protegidas por autenticación
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
-        return response()->json(User::with('partner')->get(), 200);
+        $user = Auth::user(); // Obtener el usuario autenticado
 
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
+        return response()->json($user->load('partner'), 200);
     });
 
     // Rutas protegidas por rol
@@ -61,9 +66,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
     });
 
-    Route::middleware(['role:editor'])->group(function () {
+    Route::middleware(['role:company'])->group(function () {
         Route::get('/editor/dashboard', function () {
-            return response()->json(['message' => 'Bienvenido, Editor']);
+            return response()->json(['message' => 'Bienvenido, Empresa']);
         });
     });
 });
