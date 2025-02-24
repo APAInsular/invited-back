@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Partner::class);
     }
+
+    public function weddings()
+    {
+        return $this->hasMany(Wedding::class, 'user_id');
+    }
 }

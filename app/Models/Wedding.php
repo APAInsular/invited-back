@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -27,13 +28,15 @@ class Wedding extends Model
         'partner_id',
         'user_name',
         'partner_name',
-        'Dress_Code',
-        'Wedding_Date',
-        'Music',
+        'dressCode',
+        'weddingDate',
+        'musicTitle',
+        'musicUrl',
         'foodType',
         "customMessage",
         "template",
-        "guestCount"
+        "guestCount",
+        'location_id',
     ];
 
     /**
@@ -56,12 +59,16 @@ class Wedding extends Model
         return $this->hasMany(Guest::class);
     }
 
-    public function locations(): BelongsToMany
+    public function location(): BelongsTo
     {
-        return $this->belongsToMany(Location::class);
+        return $this->belongsTo(Location::class);
     }
     public function events()
     {
         return $this->hasMany(Event::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

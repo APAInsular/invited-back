@@ -17,7 +17,8 @@ class WeddingsSeeder extends Seeder
             'customMessage' => 'Bienvenidos a nuestra boda',
             'foodType' => 'Vegetariano',
             'guestCount' => 150,
-            'template' => 'classic'
+            'template' => 'classic',
+            'location_id'=> 3
         ]);
     }
 }

@@ -46,6 +46,9 @@ Route::get('/weddings/{id}', [WeddingController::class, 'show']); // Ver una bod
 Route::put('/weddings/{id}', [WeddingController::class, 'update']); // Actualizar boda
 Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Eliminar boda y eventos
 
+Route::get('/weddings/{id}/full-info', [WeddingController::class, 'getFullWeddingInfo']);
+Route::get('/weddings/{id}/info-without-guests', [WeddingController::class, 'getInfoWithoutGuests']);
+
 
 // Rutas protegidas por autenticación
 Route::middleware(['auth:sanctum'])->group(function () {

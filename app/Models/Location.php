@@ -31,8 +31,13 @@ class Location extends Model
         'id' => 'integer',
     ];
 
-    public function weddings(): BelongsToMany
+    public function weddings()
     {
-        return $this->belongsToMany(Wedding::class);
+        return $this->hasMany(Wedding::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 }
