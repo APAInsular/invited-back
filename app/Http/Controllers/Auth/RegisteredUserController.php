@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'Partner_Name' => ['required', 'string', 'max:255'],
             'Partner_First_Surname' => ['required', 'string', 'max:255'],
             'Partner_Second_Surname' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'exists:roles,name'], // Validamos contra la BD
+            // 'role' => ['required', 'string', 'exists:roles,name'], // Validamos contra la BD
         ]);
 
         DB::beginTransaction();
