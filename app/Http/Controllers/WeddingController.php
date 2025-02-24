@@ -75,13 +75,11 @@ class WeddingController extends Controller
             'events.*.location' => ['required', 'array'],
             'events.*.location.City' => ['required', 'string'],
             'events.*.location.Country' => ['required', 'string'],
-            'events.*.location.Postal_Code' => ['nullable', 'string'],
-            'events.*.location.Population' => ['nullable', 'string'],
+            
             'location' => ['required', 'array'],
             'location.City' => ['required', 'string'],
             'location.Country' => ['required', 'string'],
-            'location.Postal_Code' => ['nullable', 'string'],
-            'location.Population' => ['nullable', 'string'],
+            
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Validación para la imagen
         ]);
 
