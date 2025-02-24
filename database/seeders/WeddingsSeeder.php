@@ -11,9 +11,10 @@ class WeddingsSeeder extends Seeder
     {
         Wedding::create([
             'user_id' => 1, // Ajusta según usuarios existentes
-            'Dress_Code' => 'Formal',
-            'Wedding_Date' => '2025-06-15',
-            'Music' => 'Jazz',
+            'dressCode' => 'Formal',
+            'weddingDate' => '2025-06-15',
+            'musicUrl' => 'htpps://musica',
+            'musicTitle' => 'la gozadera',
             'customMessage' => 'Bienvenidos a nuestra boda',
             'foodType' => 'Vegetariano',
             'guestCount' => 150,
