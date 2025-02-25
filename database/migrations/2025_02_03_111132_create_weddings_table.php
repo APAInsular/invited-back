@@ -24,7 +24,7 @@ return new class extends Migration
             // $table->unsignedBigInteger('partner_id'); // Pareja del usuario
             // $table->string(column:'user_name');
             // $table->string(column:'partner_name');
-            $table->string('dressCode');
+            $table->string('dressCode')->nullable()->default('Ninguno');;
             $table->date('weddingDate');
             $table->string('musicUrl');
             $table->string('musicTitle');

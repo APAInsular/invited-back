@@ -80,7 +80,7 @@ class WeddingController extends Controller
             'location.Country' => ['required', 'string'],
             
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Validación para la imagen
-            'dressCode' => ['required', 'string', 'max:255'],
+            'dressCode' => ['nullable', 'string', 'max:255'],
 
         ]);
 
