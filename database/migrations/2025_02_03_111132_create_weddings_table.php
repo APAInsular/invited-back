@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,34 +12,28 @@ return new class extends Migration
     {
         Schema::create('weddings', function (Blueprint $table) {
             $table->id();
-            // $table->time('Ceremony_Start_Time');
-            // $table->time('Lunch_Start_Time');
-            // $table->time('Dinner_Start_Time');
-            // $table->time('Party_Start_Time');
-            // $table->time('Party_Finish_Time');
             $table->unsignedBigInteger('user_id'); // Usuario que se casa
             $table->unsignedBigInteger('location_id');
 
-            // $table->unsignedBigInteger('partner_id'); // Pareja del usuario
-            // $table->string(column:'user_name');
-            // $table->string(column:'partner_name');
-            $table->string('dressCode')->nullable()->default('Ninguno');;
-            $table->date('weddingDate');
-            $table->string('musicUrl');
-            $table->string('musicTitle');
-            $table->string(column:'groomDescription');
-            $table->string(column:'brideDescription');
-            $table->string('customMessage');
-            $table->string(column:'foodType');
-            $table->integer(column:'guestCount');
-            $table->string(column:'template');
+            $table->string('dressCode')->nullable()->default('Ninguno');
+            $table->date('weddingDate')->default('2025-01-01');
+            $table->string('musicUrl')->nullable()->default('https://example.com/default-music.mp3'); // URL de música por defecto
+            $table->string('musicTitle')->nullable()->default('Sin título'); // Título de la música por defecto
+
+            $table->string('groomDescription')->nullable()->default('Descripción del novio no disponible');
+            $table->string('brideDescription')->nullable()->default('Descripción de la novia no disponible');
+            $table->string('customMessage')->nullable()->default('¡Te invitamos a nuestra boda!');
+
+            $table->string('foodType')->nullable()->default('Internacional');
+            $table->integer('guestCount')->default(100);
+            $table->string('template')->nullable()->default('classic');
+
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
-
         });
+
     }
 
     /**

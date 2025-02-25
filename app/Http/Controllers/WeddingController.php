@@ -98,14 +98,14 @@ class WeddingController extends Controller
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
                 'user_id' => $request->user_id,
-                'Dress_Code' => $request->dressCode,
-                'Wedding_Date' => $request->weddingDate,
-                'Music_Title' => $request->musicTitle,
-                'Music_Url' => $request->musicUrl,
-                'Food_Type' => $request->foodType,
-                'Template' => $request->template,
-                'Guest_Count' => $request->guestCount,
-                'Custom_Message' => $request->customMessage,
+                'dressCode' => $request->dressCode,
+                'weddingDate' => $request->weddingDate,
+                'musicTitle' => $request->musicTitle,
+                'musicUrl' => $request->musicUrl,
+                'foodType' => $request->foodType,
+                'template' => $request->template,
+                'guestCount' => $request->guestCount,
+                'customMessage' => $request->customMessage,
                 'location_id' => $weddingLocation->id,  // Asociar la ubicación de la boda
             ]);
 
