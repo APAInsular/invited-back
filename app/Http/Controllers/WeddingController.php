@@ -59,7 +59,6 @@ class WeddingController extends Controller
     {
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
-            'dressCode' => ['required', 'string', 'max:255'],
             'user_id' => ['required', 'integer'],
             'weddingDate' => ['required', 'date'],
             'musicTitle' => ['required', 'string', 'max:255'],
@@ -81,6 +80,8 @@ class WeddingController extends Controller
             'location.Country' => ['required', 'string'],
             
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Validación para la imagen
+            'dressCode' => ['required', 'string', 'max:255'],
+
         ]);
 
         DB::beginTransaction();
