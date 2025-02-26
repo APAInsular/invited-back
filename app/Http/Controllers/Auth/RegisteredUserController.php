@@ -27,15 +27,15 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'Name' => ['required', 'string', 'max:255'],
-            'First_Surname' => ['required', 'string', 'max:255'],
-            'Second_Surname' => ['required', 'string', 'max:255'],
-            'Phone' => ['required', 'string', 'max:255'],
-            'Email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name' => ['required', 'string', 'max:255'],
+            'firstSurname' => ['required', 'string', 'max:255'],
+            'secondSurname' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'Partner_Name' => ['required', 'string', 'max:255'],
-            'Partner_First_Surname' => ['required', 'string', 'max:255'],
-            'Partner_Second_Surname' => ['required', 'string', 'max:255'],
+            'partnerName' => ['required', 'string', 'max:255'],
+            'partnerFirstSurname' => ['required', 'string', 'max:255'],
+            'partnerSecondSurname' => ['required', 'string', 'max:255'],
             // 'role' => ['required', 'string', 'exists:roles,name'], // Validamos contra la BD
         ]);
 
@@ -43,11 +43,11 @@ class RegisteredUserController extends Controller
         try {
             // Crear usuario
             $user = User::create([
-                'Name' => $request->Name,
-                'First_Surname' => $request->First_Surname,
-                'Second_Surname' => $request->Second_Surname,
-                'Phone' => $request->Phone,
-                'Email' => $request->Email,
+                'name' => $request->name,
+                'firstSurname' => $request->firstSurname,
+                'secondSurname' => $request->secondSurname,
+                'phone' => $request->phone,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
@@ -56,9 +56,9 @@ class RegisteredUserController extends Controller
 
             // Crear pareja asociada
             $partner = Partner::create([
-                'Name' => $request->Partner_Name,
-                'First_Surname' => $request->Partner_First_Surname,
-                'Second_Surname' => $request->Partner_Second_Surname,
+                'name' => $request->partnerName,
+                'firstsSurname' => $request->partnerFirstSurname,
+                'secondSurname' => $request->partnerSecondSurname,
                 'user_id' => $user->id,
             ]);
 
@@ -100,21 +100,21 @@ class RegisteredUserController extends Controller
 
         // Validamos los campos que pueden ser enviados
         $request->validate([
-            'Name' => ['string', 'max:255'],
-            'First_Surname' => ['string', 'max:255'],
-            'Second_Surname' => ['string', 'max:255'],
-            'Phone' => ['string', 'max:255'],
-            'Email' => ['email', 'max:255', 'unique:users,email,' . $id],
+            'name' => ['string', 'max:255'],
+            'firstSurname' => ['string', 'max:255'],
+            'secondSurname' => ['string', 'max:255'],
+            'phone' => ['string', 'max:255'],
+            'email' => ['email', 'max:255', 'unique:users,email,' . $id],
             'password' => ['confirmed', Rules\Password::defaults()],
-            'Partner_Name' => ['string', 'max:255'],
-            'Partner_First_Surname' => ['string', 'max:255'],
-            'Partner_Second_Surname' => ['string', 'max:255'],
+            'partnerName' => ['string', 'max:255'],
+            'partnerFirstSurname' => ['string', 'max:255'],
+            'partnerSecondSurname' => ['string', 'max:255'],
         ]);
 
         DB::beginTransaction();
         try {
             // Actualizamos solo los campos del usuario que fueron enviados en la solicitud
-            $userFields = $request->only(['Name', 'First_Surname', 'Second_Surname', 'Phone', 'Email', 'password']);
+            $userFields = $request->only(['name', 'firstSurname', 'secondSurname', 'phone', 'email', 'password']);
             // Si el campo de la contraseña está presente, lo actualizamos
             if ($request->filled('password')) {
                 $userFields['password'] = Hash::make($request->password);
@@ -130,14 +130,14 @@ class RegisteredUserController extends Controller
             $partner = Partner::where('user_id', $id)->first();
             if ($partner) {
                 // Verificamos cada campo del partner individualmente
-                if ($request->filled('Partner_Name')) {
-                    $partner->Name = $request->Partner_Name;
+                if ($request->filled('partnerName')) {
+                    $partner->name = $request->partnerName;
                 }
-                if ($request->filled('Partner_First_Surname')) {
-                    $partner->First_Surname = $request->Partner_First_Surname;
+                if ($request->filled('partnerFirstSurname')) {
+                    $partner->firstSurname = $request->partnerFirstSurname;
                 }
-                if ($request->filled('Partner_Second_Surname')) {
-                    $partner->Second_Surname = $request->Partner_Second_Surname;
+                if ($request->filled('partnerSecondSurname')) {
+                    $partner->secondSurname = $request->partnerSecondSurname;
                 }
 
                 // Si hemos hecho cambios, guardamos la actualización del partner

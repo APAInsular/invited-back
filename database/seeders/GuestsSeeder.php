@@ -10,22 +10,22 @@ class GuestsSeeder extends Seeder
     public function run()
     {
         Guest::create([
-            'Name' => 'Carlos',
-            'First_Surname' => 'González',
-            'Second_Surname' => 'Fernández',
-            'Extra_Information' => 'Invitado especial',
-            'Allergy' => 'Ninguna',
-            'Feeding' => 'Normal',
+            'name' => 'Carlos',
+            'firstSurname' => 'González',
+            'secondSurname' => 'Fernández',
+            'extraInformation' => 'Invitado especial',
+            'allergy' => 'Ninguna',
+            'feeding' => 'Normal',
             'wedding_id' => 1 // Asegurar que la boda existe
         ]);
 
         Guest::create([
-            'Name' => 'María',
-            'First_Surname' => 'Rodríguez',
-            'Second_Surname' => 'López',
-            'Extra_Information' => 'Familiar de los novios',
-            'Allergy' => 'Gluten',
-            'Feeding' => 'Vegetariana',
+            'name' => 'María',
+            'firstSurname' => 'Rodríguez',
+            'secondSurname' => 'López',
+            'extraInformation' => 'Familiar de los novios',
+            'allergy' => 'Gluten',
+            'feeding' => 'Vegetariana',
             'wedding_id' => 1
         ]);
     }

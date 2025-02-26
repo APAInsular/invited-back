@@ -16,9 +16,9 @@ class Partner extends Model
      * @var array
      */
     protected $fillable = [
-        'Name',
-        'First_Surname',
-        'Second_Surname',
+        'name',
+        'firstSurname',
+        'secondSurname',
         'user_id',
     ];
 

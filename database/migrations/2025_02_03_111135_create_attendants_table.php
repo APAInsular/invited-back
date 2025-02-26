@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('attendants', function (Blueprint $table) {
             $table->id();
-            $table->string('Name', 400);
-            $table->string('First_Surname', 400);
-            $table->string('Second_Surname', 400);
+            $table->string('name', 400);
+            $table->string('firstSurname', 400);
+            $table->string('secondSurname', 400);
             $table->unsignedBigInteger('guest_id'); // Clave foránea
             $table->integer('age');
             $table->timestamps();
