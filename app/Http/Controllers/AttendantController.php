@@ -14,9 +14,9 @@ class AttendantController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'Name' => 'required|string|max:400',
-            'First_Surname' => 'required|string|max:400',
-            'Second_Surname' => 'required|string|max:400',
+            'name' => 'required|string|max:400',
+            'firstSurname' => 'required|string|max:400',
+            'secondSurname' => 'required|string|max:400',
             'age' => 'required|integer|min:0',
             'guest_id' => 'required|exists:guests,id'
         ]);
