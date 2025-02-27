@@ -24,22 +24,21 @@ return new class extends Migration
             // $table->unsignedBigInteger('partner_id'); // Pareja del usuario
             // $table->string(column:'user_name');
             // $table->string(column:'partner_name');
-            $table->string('dressCode')->nullable()->default('Ninguno');;
+            $table->string('dressCode')->nullable()->default('Ninguno');
             $table->date('weddingDate');
             $table->string('musicUrl');
             $table->string('musicTitle');
-            $table->string(column:'groomDescription');
-            $table->string(column:'brideDescription');
+            $table->string(column: 'groomDescription');
+            $table->string(column: 'brideDescription');
             $table->string('customMessage');
-            $table->string(column:'foodType');
-            $table->integer(column:'guestCount');
-            $table->string(column:'template');
+            $table->string(column: 'foodType');
+            $table->integer(column: 'guestCount');
+            $table->string(column: 'template');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             // $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
-
         });
     }
 
