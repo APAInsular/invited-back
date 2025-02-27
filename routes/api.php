@@ -79,7 +79,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\AttendantController;
 
-Route::middleware('auth:sanctum')->group(function () {
     // Rutas para Guests
     Route::get('/guests', [GuestController::class, 'index']);
     Route::post('/guests', [GuestController::class, 'store']);
@@ -93,5 +92,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/attendants/{id}', [AttendantController::class, 'show']);
     Route::put('/attendants/{id}', [AttendantController::class, 'update']);
     Route::delete('/attendants/{id}', [AttendantController::class, 'destroy']);
-});
 

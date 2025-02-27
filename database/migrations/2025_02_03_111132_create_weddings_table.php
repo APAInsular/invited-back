@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->string('foodType')->nullable()->default('Internacional');
             $table->integer('guestCount')->default(100);
             $table->string('template')->nullable()->default('classic');
+            $table->string('image')->nullable(); // Añadir la columna image para guardar la ruta de la imagen
 
             $table->timestamps();
 
