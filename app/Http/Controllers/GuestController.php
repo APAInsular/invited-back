@@ -19,17 +19,17 @@ class GuestController extends Controller
     {
         // Validar los datos principales
         $request->validate([
-            'Name' => ['required', 'string', 'max:400'],
-            'First_Surname' => ['required', 'string', 'max:400'],
-            'Second_Surname' => ['required', 'string', 'max:400'],
-            'Extra_Information' => ['nullable', 'string'],
-            'Allergy' => ['nullable', 'string'],
-            'Feeding' => ['nullable', 'string', 'max:400'],
+            'name' => ['required', 'string', 'max:400'],
+            'firstSurname' => ['required', 'string', 'max:400'],
+            'secondSurname' => ['required', 'string', 'max:400'],
+            'extraInformation' => ['nullable', 'string'],
+            'allergy' => ['nullable', 'string'],
+            'feeding' => ['nullable', 'string', 'max:400'],
             'wedding_id' => ['required', 'exists:weddings,id'],
             'attendants' => ['required', 'array'],
-            'attendants.*.Name' => ['required', 'string', 'max:255'],
-            'attendants.*.First_Surname' => ['nullable', 'string'],
-            'attendants.*.Second_Surname' => ['nullable', 'string'],
+            'attendants.*.name' => ['required', 'string', 'max:255'],
+            'attendants.*.firstSurname' => ['nullable', 'string'],
+            'attendants.*.secondSurname' => ['nullable', 'string'],
             'attendants.*.age' => ['nullable', 'integer'],
         ]);
 
@@ -38,21 +38,21 @@ class GuestController extends Controller
         try {
             // Crear el Guest
             $guest = Guest::create([
-                'Name' => $request->Name,
-                'First_Surname' => $request->First_Surname,
-                'Second_Surname' => $request->Second_Surname,
-                'Extra_Information' => $request->Extra_Information,
-                'Allergy' => $request->Allergy,
-                'Feeding' => $request->Feeding,
+                'name' => $request->name,
+                'firstSurname' => $request->firstSurname,
+                'secondSurname' => $request->secondSurname,
+                'extraInformation' => $request->extraInformation,
+                'allergy' => $request->allergy,
+                'feeding' => $request->feeding,
                 'wedding_id' => $request->wedding_id
             ]);
 
 
             foreach ($request->attendants as $attendant) {
                 Attendant::create([
-                    'Name' => $attendant['Name'],
-                    'First_Surname' => $attendant['First_Surname'],
-                    'Second_Surname' => $attendant['Second_Surname'],
+                    'name' => $attendant['name'],
+                    'firstSurname' => $attendant['firstSurname'],
+                    'secondSurname' => $attendant['secondSurname'],
                     'age' => $attendant['age'],
                     'guest_id' => $guest->id,
                     'created_at' => now(),

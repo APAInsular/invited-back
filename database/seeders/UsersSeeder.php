@@ -15,59 +15,59 @@ class UsersSeeder extends Seeder
         // Definir usuarios con sus roles
         $users = [
             [
-                'Name' => 'Admin User',
-                'First_Surname' => 'Pérez',
-                'Second_Surname' => 'López',
-                'Phone' => '111111111',
-                'Email' => 'admin@example.com',
+                'name' => 'Admin User',
+                'firstSurname' => 'Pérez',
+                'secondSurname' => 'López',
+                'phone' => '111111111',
+                'email' => 'admin@example.com',
                 'password' => 'password123',
                 'role' => 'admin',
                 'partner' => [
-                    'Name' => 'Ana',
-                    'First_Surname' => 'Gómez',
-                    'Second_Surname' => 'Díaz',
+                    'name' => 'Ana',
+                    'firstSurname' => 'Gómez',
+                    'secondSurname' => 'Díaz',
                 ]
             ],
             [
-                'Name' => 'Partner User',
-                'First_Surname' => 'Rodríguez',
-                'Second_Surname' => 'Martínez',
-                'Phone' => '222222222',
-                'Email' => 'partner@example.com',
+                'name' => 'Partner User',
+                'firstSurname' => 'Rodríguez',
+                'secondSurname' => 'Martínez',
+                'phone' => '222222222',
+                'email' => 'partner@example.com',
                 'password' => 'password123',
                 'role' => 'partner',
                 'partner' => [
-                    'Name' => 'Luis',
-                    'First_Surname' => 'Fernández',
-                    'Second_Surname' => 'García',
+                    'name' => 'Luis',
+                    'firstSurname' => 'Fernández',
+                    'secondSurname' => 'García',
                 ]
             ],
             [
-                'Name' => 'Company User',
-                'First_Surname' => 'González',
-                'Second_Surname' => 'Sánchez',
-                'Phone' => '333333333',
-                'Email' => 'company@example.com',
+                'name' => 'Company User',
+                'firstSurname' => 'González',
+                'secondSurname' => 'Sánchez',
+                'phone' => '333333333',
+                'email' => 'company@example.com',
                 'password' => 'password123',
                 'role' => 'company',
                 'partner' => [
-                    'Name' => 'Elena',
-                    'First_Surname' => 'Ramírez',
-                    'Second_Surname' => 'Vega',
+                    'name' => 'Elena',
+                    'firstSurname' => 'Ramírez',
+                    'secondSurname' => 'Vega',
                 ]
             ],
             [
-                'Name' => 'Viewer User',
-                'First_Surname' => 'Hernández',
-                'Second_Surname' => 'Ortiz',
-                'Phone' => '444444444',
-                'Email' => 'viewer@example.com',
+                'name' => 'Viewer User',
+                'firstSurname' => 'Hernández',
+                'secondSurname' => 'Ortiz',
+                'phone' => '444444444',
+                'email' => 'viewer@example.com',
                 'password' => 'password123',
                 'role' => 'visor',
                 'partner' => [
-                    'Name' => 'Mario',
-                    'First_Surname' => 'Torres',
-                    'Second_Surname' => 'Ruiz',
+                    'name' => 'Mario',
+                    'firstSurname' => 'Torres',
+                    'secondSurname' => 'Ruiz',
                 ]
             ],
         ];
@@ -75,11 +75,11 @@ class UsersSeeder extends Seeder
         // Crear cada usuario y asignar roles
         foreach ($users as $userData) {
             $user = User::create([
-                'Name' => $userData['Name'],
-                'First_Surname' => $userData['First_Surname'],
-                'Second_Surname' => $userData['Second_Surname'],
-                'Phone' => $userData['Phone'],
-                'Email' => $userData['Email'],
+                'name' => $userData['name'],
+                'firstSurname' => $userData['firstSurname'],
+                'secondSurname' => $userData['secondSurname'],
+                'phone' => $userData['phone'],
+                'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
             ]);
 
@@ -91,9 +91,9 @@ class UsersSeeder extends Seeder
 
             // Crear pareja asociada
             Partner::create([
-                'Name' => $userData['partner']['Name'],
-                'First_Surname' => $userData['partner']['First_Surname'],
-                'Second_Surname' => $userData['partner']['Second_Surname'],
+                'name' => $userData['partner']['name'],
+                'firstSurname' => $userData['partner']['firstSurname'],
+                'secondSurname' => $userData['partner']['secondSurname'],
                 'user_id' => $user->id,
             ]);
         }

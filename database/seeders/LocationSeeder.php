@@ -12,36 +12,36 @@ class LocationSeeder extends Seeder
         DB::table('locations')->insert([
             [
                 
-                'City' => 'New York',
-                'Country' => 'USA',
+                'city' => 'New York',
+                'country' => 'USA',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 
-                'City' => 'Washington',
-                'Country' => 'USA',
+                'city' => 'Washington',
+                'country' => 'USA',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 
-                'City' => 'Los Angeles',
-                'Country' => 'USA',
+                'city' => 'Los Angeles',
+                'country' => 'USA',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                
-                'City' => 'Paris',
-                'Country' => 'France',
+                'city' => 'Paris',
+                'country' => 'France',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 
-                'City' => 'Tokyo',
-                'Country' => 'Japan',
+                'city' => 'Tokyo',
+                'country' => 'Japan',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

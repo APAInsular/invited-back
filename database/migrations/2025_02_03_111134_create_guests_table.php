@@ -12,12 +12,12 @@ return new class extends Migration {
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->string('Name', 400);
-            $table->string('First_Surname', 400);
-            $table->string('Second_Surname', 400);
-            $table->text('Extra_Information')->nullable();
-            $table->text('Allergy')->nullable();
-            $table->string('Feeding', 400);
+            $table->string('name', 400);
+            $table->string('firstSurname', 400);
+            $table->string('secondSurname', 400);
+            $table->text('extraInformation')->nullable();
+            $table->text('allergy')->nullable();
+            $table->string('feeding', 400);
             $table->unsignedBigInteger('wedding_id'); // Clave foránea
             $table->timestamps();
 

@@ -60,7 +60,7 @@ class WeddingController extends Controller
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
             'user_id' => ['required', 'integer'],
-            'weddingDate' => ['required', 'date'],
+            'weddingDate' => ['required', 'string'],
             'musicTitle' => ['required', 'string', 'max:255'],
             'musicUrl' => ['required', 'string', 'max:255'],
             'foodType' => ['required', 'string', 'max:255'],
@@ -72,12 +72,12 @@ class WeddingController extends Controller
             'events.*.description' => ['nullable', 'string'],
             'events.*.time' => ['required', 'date_format:H:i'],
             'events.*.location' => ['required', 'array'],
-            'events.*.location.City' => ['required', 'string'],
-            'events.*.location.Country' => ['required', 'string'],
+            'events.*.location.city' => ['required', 'string'],
+            'events.*.location.country' => ['required', 'string'],
             
             'location' => ['required', 'array'],
-            'location.City' => ['required', 'string'],
-            'location.Country' => ['required', 'string'],
+            'location.city' => ['required', 'string'],
+            'location.country' => ['required', 'string'],
             
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Validación para la imagen
             'dressCode' => ['nullable', 'string', 'max:255'],
@@ -88,24 +88,21 @@ class WeddingController extends Controller
         try {
             // Guardar la ubicación principal de la boda
             $weddingLocation = Location::firstOrCreate([
-                'City' => $request->location['City'],
-                'Country' => $request->location['Country']
-            ], [
-                'Population' => $request->location['Population'] ?? null,
-                'Postal_Code' => $request->location['Postal_Code'] ?? null,
+                'city' => $request->location['city'],
+                'country' => $request->location['country']
             ]);
 
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
                 'user_id' => $request->user_id,
-                'Dress_Code' => $request->dressCode,
-                'Wedding_Date' => $request->weddingDate,
-                'Music_Title' => $request->musicTitle,
-                'Music_Url' => $request->musicUrl,
-                'Food_Type' => $request->foodType,
-                'Template' => $request->template,
-                'Guest_Count' => $request->guestCount,
-                'Custom_Message' => $request->customMessage,
+                'dressCode' => $request->dressCode,
+                'weddingDate' => $request->weddingDate,
+                'musicTitle' => $request->musicTitle,
+                'musicUrl' => $request->musicUrl,
+                'foodType' => $request->foodType,
+                'template' => $request->template,
+                'guestCount' => $request->guestCount,
+                'customMessage' => $request->customMessage,
                 'location_id' => $weddingLocation->id,  // Asociar la ubicación de la boda
             ]);
 
@@ -126,11 +123,8 @@ class WeddingController extends Controller
             // Crear los eventos asociados a la boda
             foreach ($request->events as $eventData) {
                 $eventLocation = Location::firstOrCreate([
-                    'City' => $eventData['location']['City'],
-                    'Country' => $eventData['location']['Country']
-                ], [
-                    'Population' => $eventData['location']['Population'] ?? null,
-                    'Postal_Code' => $eventData['location']['Postal_Code'] ?? null,
+                    'city' => $eventData['location']['city'],
+                    'country' => $eventData['location']['country']
                 ]);
 
                 Event::create([
@@ -174,15 +168,9 @@ class WeddingController extends Controller
             return response()->json(['error' => 'Boda no encontrada'], 404);
         }
 
-        $request->validate([
-            'Dress_Code' => ['string', 'max:255'],
-            'Wedding_Date' => ['date'],
-            'Music' => ['string', 'max:255'],
-        ]);
-
         DB::beginTransaction();
         try {
-            $wedding->update($request->only(['Dress_Code', 'Wedding_Date', 'Music']));
+            $wedding->update($request->only(['dressCode', 'weddingDate', 'musicUrl','musicTitle']));
 
             DB::commit();
             return response()->json(['message' => 'Boda actualizada correctamente', 'wedding' => $wedding], 200);

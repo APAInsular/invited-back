@@ -10,9 +10,9 @@ class Attendant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'Name', 
-        'First_Surname', 
-        'Second_Surname', 
+        'name', 
+        'firstSurname', 
+        'secondSurname', 
         'age', 
         'guest_id'
     ];
