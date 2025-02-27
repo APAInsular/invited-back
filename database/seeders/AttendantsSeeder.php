@@ -14,17 +14,17 @@ class AttendantsSeeder extends Seeder
     public function run()
     {
         Attendant::create([
-            'Name' => 'Jose',
-            'First_Surname' => 'González',
-            'Second_Surname' => 'Fernández',
+            'name' => 'Jose',
+            'firstSurname' => 'González',
+            'secondSurname' => 'Fernández',
             'age' => 22,
             'guest_id' => 1 // Asegurar que la boda existe
         ]);
 
         Attendant::create([
-            'Name' => 'Sara',
-            'First_Surname' => 'Rodríguez',
-            'Second_Surname' => 'López',
+            'name' => 'Sara',
+            'firstSurname' => 'Rodríguez',
+            'secondSurname' => 'López',
             'age' => 4,
             'guest_id' => 1
         ]);

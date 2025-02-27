@@ -76,7 +76,7 @@ class UsersSeeder extends Seeder
         foreach ($users as $userData) {
             $user = User::create([
                 'name' => $userData['name'],
-                'firstsSurname' => $userData['firstSurname'],
+                'firstSurname' => $userData['firstSurname'],
                 'secondSurname' => $userData['secondSurname'],
                 'phone' => $userData['phone'],
                 'email' => $userData['email'],
