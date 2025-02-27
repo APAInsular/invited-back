@@ -60,7 +60,7 @@ class WeddingController extends Controller
         // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
         $request->validate([
             'user_id' => ['required', 'integer'],
-            'weddingDate' => ['required', 'date'],
+            'weddingDate' => ['required', 'string'],
             'musicTitle' => ['required', 'string', 'max:255'],
             'musicUrl' => ['required', 'string', 'max:255'],
             'foodType' => ['required', 'string', 'max:255'],

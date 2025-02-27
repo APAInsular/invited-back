@@ -13,12 +13,12 @@ class AuthenticatedSessionController extends Controller
     {
         // Validamos los datos de entrada (correo y contraseña)
         $request->validate([
-            'Email' => ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'string'],
         ]);
 
         // Intentamos autenticar al usuario con las credenciales proporcionadas
-        if (Auth::attempt(['email' => $request->Email, 'password' => $request->password])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             // Si la autenticación fue exitosa, obtenemos el usuario
             $user = Auth::user();
 
