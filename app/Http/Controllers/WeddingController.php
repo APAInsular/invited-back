@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use App\Models\Wedding;
@@ -15,7 +16,7 @@ class WeddingController extends Controller
     public function index()
     {
         // Obtener todas las bodas con sus eventos
-        return response()->json(Wedding::with('events')->get(), 200);
+        return response()->json(Wedding::with('events','user.partner',)->get(), 200);
     }
 
     public function getFullWeddingInfo($id)
@@ -57,15 +58,15 @@ class WeddingController extends Controller
 
     public function store(Request $request)
     {
-        // Validar solo los datos de la boda y eventos (sin user_id ni partner_id)
+        // Validar los datos
         $request->validate([
             'user_id' => ['required', 'integer'],
-            'weddingDate' => ['required', 'string'],
+            'weddingDate' => ['required', 'date'],
             'musicTitle' => ['required', 'string', 'max:255'],
             'musicUrl' => ['required', 'string', 'max:255'],
             'foodType' => ['required', 'string', 'max:255'],
             'template' => ['required', 'string', 'max:255'],
-            'guestCount' => ['required', 'string', 'max:255'],
+            'guestCount' => ['required', 'integer'],
             'customMessage' => ['required', 'string', 'max:255'],
             'events' => ['required', 'array'],
             'events.*.name' => ['required', 'string', 'max:255'],
@@ -74,14 +75,12 @@ class WeddingController extends Controller
             'events.*.location' => ['required', 'array'],
             'events.*.location.city' => ['required', 'string'],
             'events.*.location.country' => ['required', 'string'],
-            
             'location' => ['required', 'array'],
             'location.city' => ['required', 'string'],
             'location.country' => ['required', 'string'],
-            
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Validación para la imagen
+            'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'dressCode' => ['nullable', 'string', 'max:255'],
-
+            'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         DB::beginTransaction();
@@ -95,7 +94,7 @@ class WeddingController extends Controller
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
                 'user_id' => $request->user_id,
-                'dressCode' => $request->dressCode,
+                'dressCode' => $request->dressCode ?? 'Ninguno',
                 'weddingDate' => $request->weddingDate,
                 'musicTitle' => $request->musicTitle,
                 'musicUrl' => $request->musicUrl,
@@ -103,21 +102,12 @@ class WeddingController extends Controller
                 'template' => $request->template,
                 'guestCount' => $request->guestCount,
                 'customMessage' => $request->customMessage,
-                'location_id' => $weddingLocation->id,  // Asociar la ubicación de la boda
+                'location_id' => $weddingLocation->id,
             ]);
 
-            // Subir la imagen si se proporciona
-            if ($request->hasFile('image')) {
-                // Obtener la imagen
-                $image = $request->file('image');
-                // Generar un nombre único para la imagen
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                // Mover la imagen al directorio 'images' en public
-                $image->move(public_path('images'), $imageName);
-                // Actualizar la boda con la ruta de la imagen
-                $wedding->update([
-                    'image' => 'images/' . $imageName
-                ]);
+            // Subir la imagen de portada (coverImage)
+            if ($request->hasFile('coverImage')) {
+                $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
             }
 
             // Crear los eventos asociados a la boda
@@ -136,11 +126,23 @@ class WeddingController extends Controller
                 ]);
             }
 
+            // Guardar imágenes en la galería
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('weddings/gallery', 'public');
+            
+                    Image::create([
+                        'wedding_id' => $wedding->id,
+                        'image' => $imagePath,
+                    ]);
+                }
+            }
+
             DB::commit();
 
             return response()->json([
                 'message' => 'Boda y eventos creados correctamente',
-                'wedding' => $wedding->load('events')
+                'wedding' => $wedding->load('events.location', 'location', 'images')
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -150,6 +152,7 @@ class WeddingController extends Controller
             ], 500);
         }
     }
+
 
 
     public function show($id)
@@ -170,7 +173,7 @@ class WeddingController extends Controller
 
         DB::beginTransaction();
         try {
-            $wedding->update($request->only(['dressCode', 'weddingDate', 'musicUrl','musicTitle']));
+            $wedding->update($request->only(['dressCode', 'weddingDate', 'musicUrl', 'musicTitle']));
 
             DB::commit();
             return response()->json(['message' => 'Boda actualizada correctamente', 'wedding' => $wedding], 200);
