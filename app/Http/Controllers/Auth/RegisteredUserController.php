@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
             // Crear pareja asociada
             $partner = Partner::create([
                 'name' => $request->partnerName,
-                'firstsSurname' => $request->partnerFirstSurname,
+                'firstSurname' => $request->partnerFirstSurname,
                 'secondSurname' => $request->partnerSecondSurname,
                 'user_id' => $user->id,
             ]);
