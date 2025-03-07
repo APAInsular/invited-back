@@ -14,10 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 400);
             $table->string('firstSurname', 400);
-            $table->string('secondSurname', 400);
+            $table->string('secondSurname', 400)->nullable();
             $table->text('extraInformation')->nullable();
             $table->text('allergy')->nullable();
-            $table->string('feeding', 400);
+            $table->string('feeding', 400)->nullable();
             $table->unsignedBigInteger('wedding_id'); // Clave foránea
             $table->timestamps();
 

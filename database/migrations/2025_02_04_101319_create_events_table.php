@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('wedding_id'); // Definir la columna antes de la clave foránea
-            $table->unsignedBigInteger('location_id'); // Definir la columna antes de la clave foránea
+            $table->unsignedBigInteger('location_id')->nullable(); // Definir la columna antes de la clave foránea
 
             $table->text('description')->nullable();
             $table->time('time');

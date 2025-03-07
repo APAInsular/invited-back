@@ -16,7 +16,7 @@ class AttendantController extends Controller
         $request->validate([
             'name' => 'required|string|max:400',
             'firstSurname' => 'required|string|max:400',
-            'secondSurname' => 'required|string|max:400',
+            'secondSurname' => 'nullable|string|max:400',
             'age' => 'required|integer|min:0',
             'guest_id' => 'required|exists:guests,id'
         ]);

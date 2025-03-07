@@ -21,7 +21,7 @@ class GuestController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:400'],
             'firstSurname' => ['required', 'string', 'max:400'],
-            'secondSurname' => ['required', 'string', 'max:400'],
+            'secondSurname' => ['nullable', 'string', 'max:400'],
             'extraInformation' => ['nullable', 'string'],
             'allergy' => ['nullable', 'string'],
             'feeding' => ['nullable', 'string', 'max:400'],

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 400);
             $table->string('firstSurname', 400);
-            $table->string('secondSurname', 400);
+            $table->string('secondSurname', 400)->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->timestamps();
