@@ -6,6 +6,7 @@ use App\Models\Attendant;
 use Illuminate\Http\Request;
 use App\Models\Guest;
 use DB;
+use App\Models\Wedding;
 
 
 class GuestController extends Controller
@@ -14,6 +15,32 @@ class GuestController extends Controller
     {
         return response()->json(Guest::with('attendants')->get(), 200);
     }
+
+    public function getWeddingGuests($id)
+    {
+        try {
+            // Buscar la boda con sus datos
+            $wedding = Wedding::with('location')->findOrFail($id);
+
+            // Obtener todos los invitados con sus acompañantes
+            $guests = Guest::where('wedding_id', $id)
+                ->with('attendants') // Relación con acompañantes
+                ->get();
+
+            return response()->json([
+                'message' => 'Boda e invitados encontrados',
+                'wedding' => $wedding,
+                'guests' => $guests
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener la boda y sus invitados',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
     public function store(Request $request)
     {

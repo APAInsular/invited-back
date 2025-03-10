@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\WeddingController;
-
+use App\Http\Controllers\AttendantController;
+use App\Http\Controllers\GuestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,8 +34,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas
 Route::post('/users', [RegisteredUserController::class, 'store']); // Crear un usuario con su pareja
 Route::get('/users/{id}', [RegisteredUserController::class, 'show']); // Obtener un usuario por ID
-Route::put('/users/{id}', [RegisteredUserController::class, 'update']); // Actualizar un usuario y su pareja
+Route::put('/users/{id}', [RegisteredUserController::class, 'updateUser']); // Actualizar un usuario y su pareja
 Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']); // Eliminar un usuario y su pareja
+Route::get('user/{id}/weddings', [WeddingController::class, 'getUserWeddings']);
 
 
 // CRUD de bodas y eventos
@@ -48,6 +50,7 @@ Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Elimi
 
 Route::get('/weddings/{id}/full-info', [WeddingController::class, 'getFullWeddingInfo']);
 Route::get('/weddings/{id}/info-without-guests', [WeddingController::class, 'getInfoWithoutGuests']);
+Route::get('wedding/{id}/invitados', [GuestController::class, 'getWeddingGuests']);
 
 
 // Rutas protegidas por autenticación
@@ -76,8 +79,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-use App\Http\Controllers\GuestController;
-use App\Http\Controllers\AttendantController;
 
     // Rutas para Guests
     Route::get('/guests', [GuestController::class, 'index']);

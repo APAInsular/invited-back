@@ -10,8 +10,10 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
+
 
 
 
@@ -91,68 +93,45 @@ class RegisteredUserController extends Controller
         }
         return response()->json($user, 200);
     }
-    public function update(Request $request, $id)
+    public function updateUser(Request $request, $id)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no encontrado'], 404);
-        }
-
-        // Validamos los campos que pueden ser enviados
-        $request->validate([
-            'name' => ['string', 'max:255'],
-            'firstSurname' => ['string', 'max:255'],
-            'secondSurname' => ['string', 'max:255'],
-            'phone' => ['string', 'max:255'],
-            'email' => ['email', 'max:255', 'unique:users,email,' . $id],
-            'password' => ['confirmed', Rules\Password::defaults()],
-            'partnerName' => ['string', 'max:255'],
-            'partnerFirstSurname' => ['string', 'max:255'],
-            'partnerSecondSurname' => ['string', 'max:255'],
-        ]);
-
-        DB::beginTransaction();
         try {
-            // Actualizamos solo los campos del usuario que fueron enviados en la solicitud
-            $userFields = $request->only(['name', 'firstSurname', 'secondSurname', 'phone', 'email', 'password']);
-            // Si el campo de la contraseña está presente, lo actualizamos
+            // Encontrar el usuario
+            $user = User::findOrFail($id);
+
+            // Validar solo los campos que llegan en la petición
+            $validatedData = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'firstSurname' => ['sometimes', 'string', 'max:255'],
+                'secondSurname' => ['sometimes', 'string', 'max:255'],
+                'phone' => ['sometimes', 'string', 'max:255'],
+                'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'password' => ['sometimes', 'confirmed', Rules\Password::defaults()],
+                'partnerName' => ['sometimes', 'string', 'max:255'],
+                'partnerFirstSurname' => ['sometimes', 'string', 'max:255'],
+                'partnerSecondSurname' => ['sometimes', 'string', 'max:255'],
+            ]);
+
+            // Si se envía una contraseña, la encriptamos antes de actualizar
             if ($request->filled('password')) {
-                $userFields['password'] = Hash::make($request->password);
+                $validatedData['password'] = Hash::make($request->password);
             }
 
-            // Actualizamos solo los campos del usuario si están presentes
-            if (count($userFields) > 0) {
-                $user->update($userFields);
-                $user->save();
-            }
+            // Actualizar solo los campos enviados en la petición
+            $user->update($validatedData);
 
-            // Actualizamos los campos del partner solo si están presentes
-            $partner = Partner::where('user_id', $id)->first();
-            if ($partner) {
-                // Verificamos cada campo del partner individualmente
-                if ($request->filled('partnerName')) {
-                    $partner->name = $request->partnerName;
-                }
-                if ($request->filled('partnerFirstSurname')) {
-                    $partner->firstSurname = $request->partnerFirstSurname;
-                }
-                if ($request->filled('partnerSecondSurname')) {
-                    $partner->secondSurname = $request->partnerSecondSurname;
-                }
-
-                // Si hemos hecho cambios, guardamos la actualización del partner
-                if ($partner->isDirty()) {
-                    $partner->save();
-                }
-            }
-
-            DB::commit();
-            return response()->json(['message' => 'Usuario y/o Partner actualizados correctamente'], 200);
+            return response()->json([
+                'message' => 'Usuario actualizado correctamente',
+                'user' => $user
+            ], 200);
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Error al actualizar los registros', 'details' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Error al actualizar el usuario',
+                'details' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function destroy($id)
     {
