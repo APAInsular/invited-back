@@ -26,8 +26,8 @@ class GuestController extends Controller
             'allergy' => ['nullable', 'string'],
             'feeding' => ['nullable', 'string', 'max:400'],
             'wedding_id' => ['required', 'exists:weddings,id'],
-            'attendants' => ['required', 'array'],
-            'attendants.*.name' => ['required', 'string', 'max:255'],
+            'attendants' => ['nullable', 'array'],
+            'attendants.*.name' => ['nullable', 'string', 'max:255'],
             'attendants.*.firstSurname' => ['nullable', 'string'],
             'attendants.*.secondSurname' => ['nullable', 'string'],
             'attendants.*.age' => ['nullable', 'integer'],
@@ -48,16 +48,18 @@ class GuestController extends Controller
             ]);
 
 
-            foreach ($request->attendants as $attendant) {
-                Attendant::create([
-                    'name' => $attendant['name'],
-                    'firstSurname' => $attendant['firstSurname'],
-                    'secondSurname' => $attendant['secondSurname'],
-                    'age' => $attendant['age'],
-                    'guest_id' => $guest->id,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
+            if (!empty($request->attendants)) {
+                foreach ($request->attendants as $attendant) {
+                    Attendant::create([
+                        'name' => $attendant['name'],
+                        'firstSurname' => $attendant['firstSurname'],
+                        'secondSurname' => $attendant['secondSurname'],
+                        'age' => $attendant['age'],
+                        'guest_id' => $guest->id,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
             }
 
 

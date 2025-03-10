@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('attendants', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 400);
-            $table->string('firstSurname', 400);
+            $table->string('name', 400)->nullable();
+            $table->string('firstSurname', 400)->nullable();
             $table->string('secondSurname', 400)->nullable();
-            $table->unsignedBigInteger('guest_id'); // Clave foránea
-            $table->integer('age');
+            $table->unsignedBigInteger('guest_id')->nullable(); // Clave foránea
+            $table->integer('age')->nullable();
             $table->timestamps();
 
             // Definir clave foránea correctamente
