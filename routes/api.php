@@ -85,7 +85,7 @@ Route::get('/guests', [GuestController::class, 'index']);
 Route::post('/guests', [GuestController::class, 'store']);
 Route::get('/guests/{id}', [GuestController::class, 'show']);
 Route::put('/guests/{id}', [GuestController::class, 'update']);
-Route::delete('/guests/{id}', [GuestController::class, 'deleteGuest']);
+Route::delete('/wedding/{wedding_id}/guest/{guest_id}', [GuestController::class, 'deleteGuest']);
 
 // Rutas para Attendants
 Route::get('/attendants', [AttendantController::class, 'index']);
