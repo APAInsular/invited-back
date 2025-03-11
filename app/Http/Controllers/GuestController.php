@@ -16,6 +16,77 @@ class GuestController extends Controller
         return response()->json(Guest::with('attendants')->get(), 200);
     }
 
+    public function updateGuest(Request $request, $wedding_id, $guest_id)
+    {
+        try {
+            // Verificar que la boda existe
+            $wedding = Wedding::findOrFail($wedding_id);
+
+            // Verificar que el invitado existe y pertenece a la boda
+            $guest = Guest::where('id', $guest_id)->where('wedding_id', $wedding_id)->firstOrFail();
+
+            // Validar datos (solo actualizar lo que se envíe)
+            $validatedData = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'firstSurname' => ['sometimes', 'string', 'max:255'],
+                'secondSurname' => ['sometimes', 'string', 'max:255'],
+                'extraInformation' => ['sometimes', 'string', 'nullable'],
+                'allergy' => ['sometimes', 'string', 'nullable'],
+                'feeding' => ['sometimes', 'string', 'nullable'],
+            ]);
+
+            // Actualizar solo los datos proporcionados
+            $guest->update($validatedData);
+
+            return response()->json([
+                'message' => 'Invitado actualizado correctamente',
+                'guest' => $guest
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al actualizar el invitado',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function updateAttendant(Request $request, $wedding_id, $guest_id, $attendant_id)
+    {
+        try {
+            // Verificar que la boda existe
+            $wedding = Wedding::findOrFail($wedding_id);
+
+            // Verificar que el invitado existe y pertenece a la boda
+            $guest = Guest::where('id', $guest_id)->where('wedding_id', $wedding_id)->firstOrFail();
+
+            // Verificar que el acompañante existe y pertenece al invitado
+            $attendant = Attendant::where('id', $attendant_id)->where('guest_id', $guest_id)->firstOrFail();
+
+            // Validar datos (solo actualizar lo que se envíe)
+            $validatedData = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'firstSurname' => ['sometimes', 'string', 'max:255'],
+                'secondSurname' => ['sometimes', 'string', 'max:255'],
+                'age' => ['sometimes', 'integer'],
+            ]);
+
+            // Actualizar los datos del acompañante
+            $attendant->update($validatedData);
+
+            return response()->json([
+                'message' => 'Acompañante actualizado correctamente',
+                'attendant' => $attendant
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al actualizar el acompañante',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function getWeddingGuests($id)
     {
         try {
@@ -133,16 +204,27 @@ class GuestController extends Controller
         return response()->json($guest, 200);
     }
 
-    public function destroy($id)
+    public function deleteGuest($wedding_id, $guest_id)
     {
-        $guest = Guest::find($id);
+        try {
+            $wedding = Wedding::findOrFail($wedding_id);
+            $guest = Guest::where('id', $guest_id)->where('wedding_id', $wedding_id)->firstOrFail();
 
-        if (!$guest) {
-            return response()->json(['message' => 'Guest not found'], 404);
+            // Eliminar todos los acompañantes del invitado antes de eliminarlo
+            $guest->attendants()->delete();
+
+            // Eliminar el invitado
+            $guest->delete();
+
+            return response()->json([
+                'message' => 'Invitado y sus acompañantes eliminados correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al eliminar el invitado',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        $guest->delete();
-
-        return response()->json(['message' => 'Guest deleted'], 200);
     }
+
 }
