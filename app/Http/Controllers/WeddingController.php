@@ -21,6 +21,57 @@ class WeddingController extends Controller
         return response()->json(Wedding::with('events', 'user.partner', )->get(), 200);
     }
 
+    public function getTotalGuestsAndAttendants($weddingId)
+    {
+        // Obtenemos la boda y contamos los guests y attendants relacionados
+        $total = Wedding::where('id', $weddingId)
+            ->withCount('guests') // Cuenta los invitados (guests)
+            ->withCount([
+                'guests as attendants_count' => function ($query) {
+                    $query->withCount('attendants'); // Cuenta los asistentes de cada invitado
+                }
+            ])
+            ->first();
+
+        // Sumamos el número de guests y attendants
+        $totalGuestsAndAttendants = $total->guests_count + $total->attendants_count;
+
+        // Devolvemos el total
+        return response()->json([
+            'total_guests_and_attendants' => $totalGuestsAndAttendants,
+        ]);
+    }
+
+    public function updateEvent(Request $request, $id)
+    {
+        try {
+            // Encontrar el evento
+            $event = Event::findOrFail($id);
+
+            // Validar los datos, permitiendo actualización parcial con "sometimes"
+            $validatedData = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'description' => ['sometimes', 'nullable', 'string'],
+                'time' => ['sometimes', 'date_format:H:i'],
+                'location.city' => ['sometimes', 'string', 'max:255'],
+                'location.country' => ['sometimes', 'string', 'max:255'],
+            ]);
+
+            // Actualizar solo los campos enviados
+            $event->update($validatedData);
+
+            return response()->json([
+                'message' => 'Evento actualizado correctamente',
+                'event' => $event
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al actualizar el evento',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getUserWeddings($id)
     {
         try {

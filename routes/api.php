@@ -96,3 +96,5 @@ Route::delete('/attendants/{id}', [AttendantController::class, 'destroy']);
 
 Route::put('/wedding/{wedding_id}/guest/{guest_id}/attendant/{attendant_id}', [GuestController::class, 'updateAttendant']);
 Route::put('/wedding/{wedding_id}/guest/{guest_id}', [GuestController::class, 'updateGuest']);
+
+Route::get('/wedding/{wedding_id}/numeroInvitados', [WeddingController::class, 'getTotalGuestsAndAttendants']);

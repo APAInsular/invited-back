@@ -107,9 +107,6 @@ class RegisteredUserController extends Controller
                 'phone' => ['sometimes', 'string', 'max:255'],
                 'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'password' => ['sometimes', 'confirmed', Rules\Password::defaults()],
-                'partnerName' => ['sometimes', 'string', 'max:255'],
-                'partnerFirstSurname' => ['sometimes', 'string', 'max:255'],
-                'partnerSecondSurname' => ['sometimes', 'string', 'max:255'],
             ]);
 
             // Si se envía una contraseña, la encriptamos antes de actualizar
@@ -120,9 +117,21 @@ class RegisteredUserController extends Controller
             // Actualizar solo los campos enviados en la petición
             $user->update($validatedData);
 
+            // Si se envían datos de la pareja, actualizarlos con sometimes
+            if ($request->filled('partner')) {
+                $partnerData = $request->validate([
+                    'partner.name' => ['sometimes', 'string', 'max:255'],
+                    'partner.firstSurname' => ['sometimes', 'string', 'max:255'],
+                    'partner.secondSurname' => ['sometimes', 'string', 'max:255'],
+                ]);
+
+                // Obtener la pareja actual o crear una nueva
+                $user->partner()->updateOrCreate([], $partnerData['partner']);
+            }
+
             return response()->json([
-                'message' => 'Usuario actualizado correctamente',
-                'user' => $user
+                'message' => 'Usuario y pareja actualizados correctamente',
+                'user' => $user->load('partner') // Cargar la relación de pareja
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -131,6 +140,8 @@ class RegisteredUserController extends Controller
             ], 500);
         }
     }
+
+
 
 
     public function destroy($id)
