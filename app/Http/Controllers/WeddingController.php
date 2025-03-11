@@ -21,26 +21,38 @@ class WeddingController extends Controller
         return response()->json(Wedding::with('events', 'user.partner', )->get(), 200);
     }
 
-    public function getTotalGuestsAndAttendants($weddingId)
-    {
-        // Obtenemos la boda y contamos los guests y attendants relacionados
-        $total = Wedding::where('id', $weddingId)
-            ->withCount('guests') // Cuenta los invitados (guests)
-            ->withCount([
-                'guests as attendants_count' => function ($query) {
-                    $query->withCount('attendants'); // Cuenta los asistentes de cada invitado
-                }
-            ])
-            ->first();
 
-        // Sumamos el número de guests y attendants
-        $totalGuestsAndAttendants = $total->guests_count + $total->attendants_count;
+public function getTotalGuestsAndAttendantsCount($weddingId)
+{
+    // Obtenemos todos los guests relacionados con la boda
+    $wedding = Wedding::with('guests.attendants')->find($weddingId);
 
-        // Devolvemos el total
+    // Verificamos si la boda existe
+    if (!$wedding) {
         return response()->json([
-            'total_guests_and_attendants' => $totalGuestsAndAttendants,
-        ]);
+            'message' => 'Wedding not found'
+        ], 404);
     }
+
+    // Contamos el número total de guests
+    $totalGuests = $wedding->guests->count();
+
+    // Inicializamos el contador de attendants
+    $totalAttendants = 0;
+
+    // Recorremos cada guest y sumamos los attendants
+    foreach ($wedding->guests as $guest) {
+        $totalAttendants += $guest->attendants->count(); // Sumar el número de attendants de cada guest
+    }
+
+    // Devolvemos el total de guests y attendants
+    return response()->json([
+        'total_guests' => $totalGuests,
+        'total_attendants' => $totalAttendants,
+        'total_guests_and_attendants' => $totalGuests + $totalAttendants
+    ]);
+}
+
 
     public function updateEvent(Request $request, $id)
     {
