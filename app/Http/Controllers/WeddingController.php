@@ -22,36 +22,36 @@ class WeddingController extends Controller
     }
 
 
-public function getTotalGuestsAndAttendantsCount($weddingId)
-{
-    // Obtenemos todos los guests relacionados con la boda
-    $wedding = Wedding::with('guests.attendants')->find($weddingId);
+    public function getTotalGuestsAndAttendantsCount($weddingId)
+    {
+        // Obtenemos todos los guests relacionados con la boda
+        $wedding = Wedding::with('guests.attendants')->find($weddingId);
 
-    // Verificamos si la boda existe
-    if (!$wedding) {
+        // Verificamos si la boda existe
+        if (!$wedding) {
+            return response()->json([
+                'message' => 'Wedding not found'
+            ], 404);
+        }
+
+        // Contamos el número total de guests
+        $totalGuests = $wedding->guests->count();
+
+        // Inicializamos el contador de attendants
+        $totalAttendants = 0;
+
+        // Recorremos cada guest y sumamos los attendants
+        foreach ($wedding->guests as $guest) {
+            $totalAttendants += $guest->attendants->count(); // Sumar el número de attendants de cada guest
+        }
+
+        // Devolvemos el total de guests y attendants
         return response()->json([
-            'message' => 'Wedding not found'
-        ], 404);
+            'total_guests' => $totalGuests,
+            'total_attendants' => $totalAttendants,
+            'total_guests_and_attendants' => $totalGuests + $totalAttendants
+        ]);
     }
-
-    // Contamos el número total de guests
-    $totalGuests = $wedding->guests->count();
-
-    // Inicializamos el contador de attendants
-    $totalAttendants = 0;
-
-    // Recorremos cada guest y sumamos los attendants
-    foreach ($wedding->guests as $guest) {
-        $totalAttendants += $guest->attendants->count(); // Sumar el número de attendants de cada guest
-    }
-
-    // Devolvemos el total de guests y attendants
-    return response()->json([
-        'total_guests' => $totalGuests,
-        'total_attendants' => $totalAttendants,
-        'total_guests_and_attendants' => $totalGuests + $totalAttendants
-    ]);
-}
 
 
     public function updateEvent(Request $request, $id)
@@ -251,62 +251,74 @@ public function getTotalGuestsAndAttendantsCount($weddingId)
         return response()->json($wedding, 200);
     }
 
-    public function update(Request $request, $id)
+    public function updateWedding(Request $request, $id)
     {
-        // Validación de los datos entrantes
-        $validatedData = $request->validate([
-            'weddingDate' => ['nullable', 'date'],
-            'musicTitle' => ['nullable', 'string', 'max:255'],
-            'musicUrl' => ['nullable', 'string', 'max:255'],
-            'foodType' => ['nullable', 'string', 'max:255'],
-            'template' => ['nullable', 'string', 'max:255'],
-            'guestCount' => ['nullable', 'integer'],
-            'customMessage' => ['nullable', 'string', 'max:255'],
-            'dressCode' => ['nullable', 'string', 'max:255'],
-            'location' => ['nullable', 'array'],
-            'location.city' => ['nullable', 'string'],
-            'location.country' => ['nullable', 'string'],
-            'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        ]);
-
         try {
             // Buscar la boda
             $wedding = Wedding::findOrFail($id);
 
-            // Si se envía una nueva imagen de portada, actualizarla
-            if ($request->hasFile('coverImage')) {
-                $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
-                $wedding->coverImage = $coverImagePath;
-            }
+            // Validar solo los campos enviados
+            $validatedData = $request->validate([
+                'user_id' => ['sometimes', 'integer'],
+                'weddingDate' => ['sometimes', 'date'],
+                'musicTitle' => ['sometimes', 'string', 'max:255'],
+                'musicUrl' => ['sometimes', 'string', 'max:255'],
+                'foodType' => ['sometimes', 'string', 'max:255'],
+                'template' => ['sometimes', 'string', 'max:255'],
+                'guestCount' => ['sometimes', 'integer'],
+                'customMessage' => ['sometimes', 'string', 'max:255'],
+                'dressCode' => ['sometimes', 'string', 'max:255'],
+                'location' => ['sometimes', 'array'],
+                'location.city' => ['sometimes', 'string', 'max:255'],
+                'location.country' => ['sometimes', 'string', 'max:255'],
+                'coverImage' => ['sometimes', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'images.*' => ['sometimes', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'events' => ['sometimes', 'array'],
+                'events.*.id' => ['sometimes', 'integer', 'exists:events,id'],
+                'events.*.name' => ['sometimes', 'string', 'max:255'],
+                'events.*.description' => ['sometimes', 'nullable', 'string'],
+                'events.*.time' => ['sometimes', 'date_format:H:i'],
+                'events.*.location.city' => ['sometimes', 'string', 'max:255'],
+                'events.*.location.country' => ['sometimes', 'string', 'max:255'],
+            ]);
 
-            // Si se proporciona una nueva ubicación, actualizarla
-            if (!empty($request->location)) {
-                $location = Location::firstOrCreate([
-                    'city' => $request->location['city'] ?? $wedding->location->city,
-                    'country' => $request->location['country'] ?? $wedding->location->country,
-                ]);
-                $wedding->location_id = $location->id;
-            }
+            // Actualizar los datos de la boda
+            $wedding->update($validatedData);
 
-            // Si se suben nuevas imágenes de galería, agregarlas
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('weddings/gallery', 'public');
-                    Image::create([
-                        'wedding_id' => $wedding->id,
-                        'image' => $imagePath,
-                    ]);
+            // Actualizar eventos si se envían
+            if ($request->has('events')) {
+                foreach ($request->events as $eventData) {
+                    if (isset($eventData['id'])) {
+                        $event = Event::findOrFail($eventData['id']);
+                        $event->update([
+                            'name' => $eventData['name'] ?? $event->name,
+                            'description' => $eventData['description'] ?? $event->description,
+                            'time' => $eventData['time'] ?? $event->time,
+                            'location' => [
+                                'city' => $eventData['location']['city'] ?? $event->location['city'],
+                                'country' => $eventData['location']['country'] ?? $event->location['country'],
+                            ],
+                        ]);
+                    }
                 }
             }
 
-            // Actualizar solo los campos enviados en la solicitud
-            $wedding->fill($validatedData);
-            $wedding->save();
+            // Actualizar imágenes si se envían
+            if ($request->hasFile('coverImage')) {
+                $coverPath = $request->file('coverImage')->store('weddings/covers', 'public');
+                $wedding->update(['coverImage' => $coverPath]);
+            }
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('weddings/images', 'public');
+                    $wedding->images()->create(['path' => $imagePath]);
+                }
+            }
 
             return response()->json([
                 'message' => 'Boda actualizada correctamente',
-                'wedding' => $wedding
+                'wedding' => $wedding->load('events', 'images')
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -315,6 +327,7 @@ public function getTotalGuestsAndAttendantsCount($weddingId)
             ], 500);
         }
     }
+
 
 
     public function destroy($id)

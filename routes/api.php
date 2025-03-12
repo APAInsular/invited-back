@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,7 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/weddings', [WeddingController::class, 'store']);
 });
 Route::get('/weddings/{id}', [WeddingController::class, 'show']); // Ver una boda específica
-Route::put('/weddings/{id}', [WeddingController::class, 'update']); // Actualizar boda
+Route::put('/weddings/{id}', [WeddingController::class, 'updateWedding']); // Actualizar boda
 Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Eliminar boda y eventos
 
 Route::get('/weddings/{id}/full-info', [WeddingController::class, 'getFullWeddingInfo']);
@@ -98,3 +99,8 @@ Route::put('/wedding/{wedding_id}/guest/{guest_id}/attendant/{attendant_id}', [G
 Route::put('/wedding/{wedding_id}/guest/{guest_id}', [GuestController::class, 'updateGuest']);
 
 Route::get('/wedding/{wedding_id}/numeroInvitados', action: [WeddingController::class, 'getTotalGuestsAndAttendantsCount']);
+
+Route::get('/events/{id}', [EventController::class, 'getEvent']);
+Route::post('/events', [EventController::class, 'createEvent']);
+Route::put('/events/{id}', [EventController::class, 'updateEvent']);
+Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
