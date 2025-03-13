@@ -91,7 +91,7 @@ class GuestController extends Controller
     {
         try {
             // Buscar la boda con sus datos
-            $wedding = Wedding::with('location')->findOrFail($id);
+            $wedding = Wedding::with('location', 'events')->findOrFail($id);
 
             // Obtener todos los invitados con sus acompañantes
             $guests = Guest::where('wedding_id', $id)
