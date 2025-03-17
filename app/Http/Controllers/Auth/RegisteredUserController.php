@@ -9,11 +9,13 @@ use DB;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
-
+use App\Mail\WelcomeUserMail;
 
 
 
@@ -64,10 +66,18 @@ class RegisteredUserController extends Controller
                 'user_id' => $user->id,
             ]);
 
+            // Confirmar transacción antes de enviar el correo
+            DB::commit();
+
             // Generar token (si usas Sanctum)
             $token = $user->createToken('AuthToken')->plainTextToken;
 
-            DB::commit();
+            // Intentar enviar el correo SIN afectar la BD
+            try {
+                Mail::to($user->email)->send(new WelcomeUserMail($user));
+            } catch (\Exception $e) {
+                \Log::error("Error al enviar el correo: " . $e->getMessage());
+            }
 
             return response()->json([
                 'message' => 'Usuario y Partner creados correctamente',
