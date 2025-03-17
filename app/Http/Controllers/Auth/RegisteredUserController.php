@@ -74,7 +74,9 @@ class RegisteredUserController extends Controller
 
             // Intentar enviar el correo SIN afectar la BD
             try {
-                Mail::to($user->email)->send(new WelcomeUserMail($user));
+                Mail::to($user->email)
+                    ->cc('contacto@invited.es') // Añade copia oculta
+                    ->send(new WelcomeUserMail($user));
             } catch (\Exception $e) {
                 \Log::error("Error al enviar el correo: " . $e->getMessage());
             }
