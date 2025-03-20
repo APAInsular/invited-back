@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GuestAcceptedMail;
 use App\Models\Attendant;
 use Illuminate\Http\Request;
 use App\Models\Guest;
 use DB;
 use App\Models\Wedding;
+use Mail;
 
 
 class GuestController extends Controller
@@ -135,6 +137,8 @@ class GuestController extends Controller
         DB::beginTransaction(); // Iniciar transacción
         try {
             // Crear el Guest
+            $wedding = Wedding::with('user', )->findOrFail($request->wedding_id);
+
             $guest = Guest::create([
                 'name' => $request->name,
                 'firstSurname' => $request->firstSurname,
@@ -162,12 +166,25 @@ class GuestController extends Controller
 
 
             DB::commit(); // Guardar en la BD
+            try {
+                // Obtener los dueños de la boda (marido y mujer)
+                $owners = [$wedding->user->email];
 
-            return response()->json([
-                'message' => 'Invitado y acompañantes creados exitosamente',
-                'guest' => $guest->load('attendants'),
-                // 'attendants' => $attendantsData
-            ], 201);
+                // Si tienes más dueños (por ejemplo, el cónyuge), agrégalos aquí
+                if ($wedding->partner_email ?? false) {
+                    $owners[] = $wedding->partner_email;
+                }
+
+                // Enviar correo a los dueños de la boda
+                Mail::to($owners)->send(new GuestAcceptedMail($guest, $wedding));
+
+                if (count(Mail::failures()) > 0) {
+                    throw new \Exception("Falló el envío de correos: " . implode(", ", Mail::failures()));
+                }
+
+            } catch (\Exception $e) {
+                \Log::error("Error al enviar el correo de confirmación del invitado: " . $e->getMessage());
+            }
 
         } catch (\Exception $e) {
             DB::rollBack(); // Revertir cambios si hay un error

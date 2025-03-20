@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminUserNotificationMail;
 use App\Models\Partner;
 use Auth;
 use DB;
@@ -74,9 +75,11 @@ class RegisteredUserController extends Controller
 
             // Intentar enviar el correo SIN afectar la BD
             try {
-                Mail::to($user->email)
-                    ->cc('contacto@invited.es') // Añade copia oculta
-                    ->send(new WelcomeUserMail($user));
+                Mail::to(users: $user->email)->send(new WelcomeUserMail($user));
+
+                    // ->cc('contacto@invited.es') // Añade copia oculta
+                Mail::to('contacto@invited.es')->send(new AdminUserNotificationMail($user));
+
             } catch (\Exception $e) {
                 \Log::error("Error al enviar el correo: " . $e->getMessage());
             }

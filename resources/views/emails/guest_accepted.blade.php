@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a nuestra plataforma</title>
+    <title>¡Un invitado ha confirmado su asistencia!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            border: 1px solid #ddd; /* Borde tipo card */
+            border: 1px solid #ddd;
         }
         .header {
             background-color: #F19292;
@@ -36,10 +36,17 @@
             font-size: 16px;
             line-height: 1.6;
         }
+        .details {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .details p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
         .button {
             display: inline-block;
-            background-color: #F19292
-            ;
+            background-color: #F19292;
             color: white;
             padding: 12px 20px;
             text-decoration: none;
@@ -53,25 +60,29 @@
             font-size: 14px;
             color: #777;
         }
-        a{
-            text-decoration: none;
-            color: white;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            🌟 ¡Bienvenido, {{ $user->name }}! 🌟
+            ✅ ¡Nuevo invitado confirmado!
         </div>
         <div class="content">
-            <p>Estamos encantados de tenerte en nuestra plataforma. 🎉</p>
-            <p>Explora, conecta y disfruta de la mejor experiencia con nosotros.</p>
-            <p>Si necesitas ayuda, no dudes en contactarnos.</p>
-            <a href="{{ url('/') }}" class="button">Ir a la Plataforma</a>
+            <p>¡Buenas noticias! Uno de tus invitados ha confirmado su asistencia a tu boda. 🎉</p>
+            <div class="details">
+                <p><strong>👤 Invitado:</strong> {{ $guest->name }} {{ $guest->firstSurname }}</p>
+                <p><strong>📅 Fecha de la boda:</strong> {{ $wedding->weddingDate }}</p>
+                @if(!empty($wedding->location))
+                    <p><strong>📍 Ubicación:</strong> {{ $wedding->location['city'] ?? 'No especificada' }}, {{ $wedding->location['country'] ?? 'No especificada' }}</p>
+                @endif
+                @if(!empty($wedding->dressCode))
+                    <p><strong>👗 Código de vestimenta:</strong> {{ $wedding->dressCode }}</p>
+                @endif
+            </div>
+            <a href="{{ url('/wedding/'.$wedding->id.'/guests') }}" class="button">Ver lista de invitados</a>
         </div>
         <div class="footer">
-            <p>Saludos,</p>
+            <p>¡Sigue disfrutando de la planificación de tu gran día! 💍✨</p>
             <p><strong>El equipo de Invited</strong></p>
         </div>
         <p>Este mensaje ha sido enviado automáticamente por Invited.es, una aplicación desarrollada por APA Insular SL. Si usted no es el destinatario previsto, por favor notifique al remitente y elimine este correo. Para conocer cómo tratamos sus datos personales y ejercer sus derechos, consulte nuestra <a href="https://invited.es/politica-de-privacidad/" target="_blank">Política de Privacidad y Protección de Datos</a>.</p>

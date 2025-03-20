@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AdminUserNotificationMail;
+use App\Mail\WeddingCreatedMail;
+use App\Mail\WelcomeUserMail;
 use App\Models\Image;
 use App\Models\Location;
 use App\Models\User;
@@ -10,6 +13,7 @@ use App\Models\Wedding;
 use App\Models\Event;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Mail;
 
 
 
@@ -112,7 +116,8 @@ class WeddingController extends Controller
             'user.partner',      // Información del usuario que creó la boda
             'events.location',    // Eventos asociados
             'guests.attendants', // Invitados junto con sus acompañantes
-            'location'
+            'location',
+            'images'             // Imágenes relacionadas con la boda
         ])->find($id);
 
         if (!$wedding) {
@@ -144,114 +149,132 @@ class WeddingController extends Controller
 
 
     public function store(Request $request)
-{
-    // Validar los datos
-    $request->validate([
-        'user_id' => ['required', 'integer'],
-        'weddingDate' => ['required', 'date'],
-        'musicTitle' => ['required', 'string', 'max:255'],
-        'musicUrl' => ['required', 'string', 'max:255'],
-        'foodType' => ['required', 'string', 'max:255'],
-        'template' => ['required', 'string', 'max:255'],
-        'guestCount' => ['required', 'integer'],
-        'customMessage' => ['required', 'string', 'max:255'],
-        'events' => ['required', 'array'],
-        'events.*.name' => ['required', 'string', 'max:255'],
-        'events.*.description' => ['nullable', 'string'],
-        'events.*.time' => ['required', 'date_format:H:i'],
-        'events.*.location' => ['nullable', 'array'],
-        'events.*.location.city' => ['nullable', 'string'],
-        'events.*.location.country' => ['nullable', 'string'],
-        'location' => ['nullable', 'array'],
-        'location.city' => ['nullable', 'string'],
-        'location.country' => ['nullable', 'string'],
-        'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-    ]);
-
-    DB::beginTransaction();
-    try {
-        // Guardar la ubicación principal de la boda
-        $weddingLocation = Location::firstOrCreate([
-            'city' => $request->location['city'],
-            'country' => $request->location['country']
+    {
+        // Validar los datos
+        $request->validate([
+            'user_id' => ['required', 'integer'],
+            'weddingDate' => ['required', 'date'],
+            'musicTitle' => ['required', 'string', 'max:255'],
+            'musicUrl' => ['required', 'string', 'max:255'],
+            'foodType' => ['required', 'string', 'max:255'],
+            'template' => ['required', 'string', 'max:255'],
+            'guestCount' => ['required', 'integer'],
+            'customMessage' => ['required', 'string', 'max:255'],
+            'events' => ['required', 'array'],
+            'events.*.name' => ['required', 'string', 'max:255'],
+            'events.*.description' => ['nullable', 'string'],
+            'events.*.time' => ['required', 'date_format:H:i'],
+            'events.*.location' => ['nullable', 'array'],
+            'events.*.location.city' => ['nullable', 'string'],
+            'events.*.location.country' => ['nullable', 'string'],
+            'location' => ['nullable', 'array'],
+            'location.city' => ['nullable', 'string'],
+            'location.country' => ['nullable', 'string'],
+            'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
-        // Crear la boda con los datos validados
-        $wedding = Wedding::create([
-            'user_id' => $request->user_id,
-            'dressCode' => $request->dressCode ?? 'Ninguno',
-            'weddingDate' => $request->weddingDate,
-            'musicTitle' => $request->musicTitle,
-            'musicUrl' => $request->musicUrl,
-            'foodType' => $request->foodType,
-            'template' => $request->template,
-            'guestCount' => $request->guestCount,
-            'customMessage' => $request->customMessage,
-            'location_id' => $weddingLocation->id,
-        ]);
-
-        // Subir la imagen de portada (coverImage)
-        if ($request->hasFile('coverImage')) {
-            if ($request->file('coverImage')->isValid()) {
-                $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
-                // Guardar la ruta de la imagen de portada en la base de datos
-                Image::create([
-                    'wedding_id' => $wedding->id,
-                    'image' => $coverImagePath,
-                ]);
-            } else {
-                throw new \Exception('La imagen de portada no es válida');
-            }
-        }
-
-        // Crear los eventos asociados a la boda
-        foreach ($request->events as $eventData) {
-            $eventLocation = Location::firstOrCreate([
-                'city' => $eventData['location']['city'],
-                'country' => $eventData['location']['country']
+        DB::beginTransaction();
+        try {
+            // Guardar la ubicación principal de la boda
+            $weddingLocation = Location::firstOrCreate([
+                'city' => $request->location['city'],
+                'country' => $request->location['country']
             ]);
 
-            Event::create([
-                'wedding_id' => $wedding->id,
-                'location_id' => $eventLocation->id,
-                'name' => $eventData['name'],
-                'description' => $eventData['description'] ?? null,
-                'time' => $eventData['time'],
+            // Crear la boda con los datos validados
+            $wedding = Wedding::create([
+                'user_id' => $request->user_id,
+                'dressCode' => $request->dressCode ?? 'Ninguno',
+                'weddingDate' => $request->weddingDate,
+                'musicTitle' => $request->musicTitle,
+                'musicUrl' => $request->musicUrl,
+                'foodType' => $request->foodType,
+                'template' => $request->template,
+                'guestCount' => $request->guestCount,
+                'customMessage' => $request->customMessage,
+                'location_id' => $weddingLocation->id,
+                'coverImage' => $request->coverImage ? $request->coverImage->store('weddings/covers', 'public') : null,
             ]);
-        }
 
-        // Guardar imágenes en la galería
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                if ($image->isValid()) {
-                    $imagePath = $image->store('weddings/gallery', 'public');
-
-                    // Guardar la ruta de la imagen en la base de datos
+            // Subir la imagen de portada (coverImage)
+            if ($request->hasFile('coverImage')) {
+                if ($request->file('coverImage')->isValid()) {
+                    $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
+                    // Guardar la ruta de la imagen de portada en la base de datos
                     Image::create([
                         'wedding_id' => $wedding->id,
-                        'image' => $imagePath,
+                        'image' => $coverImagePath,
                     ]);
                 } else {
-                    throw new \Exception('Una o más imágenes no son válidas');
+                    throw new \Exception('La imagen de portada no es válida');
                 }
             }
+
+            // Crear los eventos asociados a la boda
+            foreach ($request->events as $eventData) {
+                $eventLocation = Location::firstOrCreate([
+                    'city' => $eventData['location']['city'],
+                    'country' => $eventData['location']['country']
+                ]);
+
+                Event::create([
+                    'wedding_id' => $wedding->id,
+                    'location_id' => $eventLocation->id,
+                    'name' => $eventData['name'],
+                    'description' => $eventData['description'] ?? null,
+                    'time' => $eventData['time'],
+                ]);
+            }
+
+            // Guardar imágenes en la galería
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    if ($image->isValid()) {
+                        $imagePath = $image->store('weddings/gallery', 'public');
+
+                        // Guardar la ruta de la imagen en la base de datos
+                        Image::create([
+                            'wedding_id' => $wedding->id,
+                            'image' => $imagePath,
+                        ]);
+                    } else {
+                        throw new \Exception('Una o más imágenes no son válidas');
+                    }
+                }
+            }
+
+            DB::commit();
+            try {
+                // Obtener el usuario de la boda
+                $user = User::findOrFail($request->user_id);
+
+                // Enviar correo al usuario creador de la boda
+                Mail::to($user->email)->send(new WeddingCreatedMail($wedding));
+
+                // Enviar correo de notificación al administrador
+                Mail::to(users: 'contacto@invited.es')->send(new WeddingCreatedMail($wedding));
+
+                if (count(Mail::failures()) > 0) {
+                    throw new \Exception("Falló el envío de correos: " . implode(", ", Mail::failures()));
+                }
+
+            } catch (\Exception $e) {
+                \Log::error("Error al enviar el correo: " . $e->getMessage());
+            }
+
+            return response()->json([
+                'message' => 'Boda y eventos creados correctamente',
+                'wedding' => $wedding->load('events.location', 'location', 'images')
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Error al guardar la boda y eventos',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        DB::commit();
-
-        return response()->json([
-            'message' => 'Boda y eventos creados correctamente',
-            'wedding' => $wedding->load('events.location', 'location', 'images')
-        ], 201);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'error' => 'Error al guardar la boda y eventos',
-            'details' => $e->getMessage()
-        ], 500);
     }
-}
 
 
 

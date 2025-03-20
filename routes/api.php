@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -104,3 +105,5 @@ Route::get('/events/{id}', [EventController::class, 'getEvent']);
 Route::post('/events', [EventController::class, 'createEvent']);
 Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
+
+Route::post('/contact', [ContactController::class, 'sendMessage']);
