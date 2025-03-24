@@ -56,6 +56,7 @@ class RegisteredUserController extends Controller
             'data.partnerSecondSurname' => ['required', 'string', 'max:255'],
             'token' => ['required', 'string'],
         ]);
+        \Log::info('reCAPTCHA token received: ' . $request->token);
 
         // Verificar reCAPTCHA
         $secretKey = env('RECAPTCHA_SECRET_KEY');
