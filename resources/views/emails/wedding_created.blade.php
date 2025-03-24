@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Tu boda ha sido creada!</title>
+    <title>Completa tu pago - Invited</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,8 +22,7 @@
             border: 1px solid #ddd;
         }
         .header {
-            background-color: #F19292
-            ;
+            background-color: #F19292;
             padding: 20px;
             border-radius: 10px 10px 0 0;
             color: white;
@@ -32,10 +31,6 @@
         .content {
             padding: 20px;
             color: #333;
-        }
-        .content p {
-            font-size: 16px;
-            line-height: 1.6;
         }
         .details {
             text-align: left;
@@ -66,37 +61,33 @@
 <body>
     <div class="container">
         <div class="header">
-            🎉 ¡Felicidades, tu boda ha sido creada! 🎉
+            🎉 ¡Solo falta un paso para activar tu boda en Invited! 🎉
         </div>
         <div class="content">
-            <p>Tu boda ha sido registrada exitosamente. Estamos emocionados de acompañarte en este viaje tan especial. 💍✨</p>
+            <p>Tu invitacion digital ha sido creada con éxito en Invited. Para poder obtener el enlace y enviarlo a tus invitados, sólo necesitas completar el pago.</p>
             <div class="details">
-                <p><strong>📅 Fecha:</strong> {{ $wedding->weddingDate }}</p>
+                <p><strong>📅 Fecha de la boda:</strong> {{ $wedding->weddingDate }}</p>
                 <p><strong>📍 Ubicación:</strong> {{ $wedding->location['city'] ?? 'No especificada' }}, {{ $wedding->location['country'] ?? 'No especificada' }}</p>
-                <p><strong>👥 Invitados:</strong> {{ $wedding->guestCount ?? 'No especificado' }}</p>
-                @if(!empty($wedding->dressCode))
-                    <p><strong>👗 Código de vestimenta:</strong> {{ $wedding->dressCode }}</p>
-                @endif
-                @if(!empty($wedding->musicTitle) && !empty($wedding->musicUrl))
-                    <p><strong>🎶 Canción especial:</strong> <a href="{{ $wedding->musicUrl }}" target="_blank">{{ $wedding->musicTitle }}</a></p>
-                @endif
-                @if(!empty($wedding->groomDescription))
-                    <p><strong>🤵 Sobre el novio:</strong> {{ $wedding->groomDescription }}</p>
-                @endif
-                @if(!empty($wedding->brideDescription))
-                    <p><strong>👰 Sobre la novia:</strong> {{ $wedding->brideDescription }}</p>
-                @endif
-                @if(!empty($wedding->customMessage))
-                    <p><strong>💌 Mensaje especial:</strong> {{ $wedding->customMessage }}</p>
-                @endif
-                @if(!empty($wedding->foodType))
-                    <p><strong>🍽️ Tipo de comida:</strong> {{ $wedding->foodType }}</p>
-                @endif
+                <p><strong>👥 Número de invitados:</strong> {{ $wedding->guestCount }}</p>
             </div>
-            <a href="{{ url('/dashboard') }}" class="button">Ver mi Boda</a>
+            <p>Puedes realizar el pago de tres maneras:</p>
+
+            <h3>💳 Pago online:</h3>
+            <p>Haz clic en el siguiente botón para pagar de forma rápida y segura a través de Revolut:</p>
+            <a href="https://checkout.revolut.com/pay/5d724aa1-81fc-4a32-a2a6-a18c7395204b" class="button">Realizar pago online</a>
+
+            <h3>Pago mediante QR:</h3>
+            <img src="{{ Storage::url('qr/qr.png') }}" alt="Código QR">
+            <h3>🏦 Transferencia bancaria:</h3>
+            <p>Si prefieres realizar el pago mediante transferencia, usa los siguientes datos:</p>
+            <p><strong>🧾 Beneficiario:</strong> APA INSULAR SOCIEDAD LIMITADA</p>
+            <p><strong>🏦 IBAN:</strong> ES6915830001139386225614</p>
+            <p><strong>✉️ Referencia:</strong> Indica tu email de registro en invited.es</p>
+
+            <p>Una vez realizado el pago, por favor envía el comprobante a <strong>contacto@invited.es</strong> para validar la transacción.</p>
         </div>
         <div class="footer">
-            <p>Saludos,</p>
+            <p>Si tienes alguna duda, no dudes en escribirnos.</p>
             <p><strong>El equipo de Invited</strong></p>
         </div>
     </div>

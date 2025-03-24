@@ -7,11 +7,13 @@ use App\Mail\AdminUserNotificationMail;
 use App\Models\Partner;
 use Auth;
 use DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 use App\Models\User;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
@@ -30,74 +32,89 @@ class RegisteredUserController extends Controller
         return response()->json(User::with('partner')->get(), 200);
     }
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'firstSurname' => ['required', 'string', 'max:255'],
-            'secondSurname' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'partnerName' => ['required', 'string', 'max:255'],
-            'partnerFirstSurname' => ['required', 'string', 'max:255'],
-            'partnerSecondSurname' => ['required', 'string', 'max:255'],
-            // 'role' => ['required', 'string', 'exists:roles,name'], // Validamos contra la BD
+{
+    $request->validate([
+        'data.name' => ['required', 'string', 'max:255'],
+        'data.firstSurname' => ['required', 'string', 'max:255'],
+        'data.secondSurname' => ['required', 'string', 'max:255'],
+        'data.phone' => ['required', 'string', 'max:255'],
+        'data.email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'data.password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'data.partnerName' => ['required', 'string', 'max:255'],
+        'data.partnerFirstSurname' => ['required', 'string', 'max:255'],
+        'data.partnerSecondSurname' => ['required', 'string', 'max:255'],
+        'token' => ['required', 'string'],
+    ]);
+
+    // Verificar reCAPTCHA
+    $secretKey = env('RECAPTCHA_SECRET_KEY');
+    try {
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $secretKey,
+            'response' => $request->token,
         ]);
 
-        DB::beginTransaction();
-        try {
-            // Crear usuario
-            $user = User::create([
-                'name' => $request->name,
-                'firstSurname' => $request->firstSurname,
-                'secondSurname' => $request->secondSurname,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
+        $result = $response->json();
 
-            // Asignar rol con Spatie
-            $user->assignRole($request->role);
-
-            // Crear pareja asociada
-            $partner = Partner::create([
-                'name' => $request->partnerName,
-                'firstSurname' => $request->partnerFirstSurname,
-                'secondSurname' => $request->partnerSecondSurname,
-                'user_id' => $user->id,
-            ]);
-
-            // Confirmar transacción antes de enviar el correo
-            DB::commit();
-
-            // Generar token (si usas Sanctum)
-            $token = $user->createToken('AuthToken')->plainTextToken;
-
-            // Intentar enviar el correo SIN afectar la BD
-            try {
-                Mail::to(users: $user->email)->send(new WelcomeUserMail($user));
-
-                    // ->cc('contacto@invited.es') // Añade copia oculta
-                Mail::to('contacto@invited.es')->send(new AdminUserNotificationMail($user));
-
-            } catch (\Exception $e) {
-                \Log::error("Error al enviar el correo: " . $e->getMessage());
-            }
-
-            return response()->json([
-                'message' => 'Usuario y Partner creados correctamente',
-                'user' => $user->load('roles'), // Cargar roles en la respuesta
-                'token' => $token,
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'error' => 'Error al crear los registros',
-                'details' => $e->getMessage(),
-            ], 500);
+        if (!$result['success'] || $result['score'] < 0.5) {
+            throw ValidationException::withMessages(['token' => ['reCAPTCHA verification failed.']]);
         }
+    } catch (\Exception $e) {
+        \Log::error('reCAPTCHA verification error: ' . $e->getMessage());
+        throw ValidationException::withMessages(['token' => ['reCAPTCHA verification error.']]);
     }
+
+    DB::beginTransaction();
+    try {
+        // Crear usuario
+        $user = User::create([
+            'name' => $request->data['name'],
+            'firstSurname' => $request->data['firstSurname'],
+            'secondSurname' => $request->data['secondSurname'],
+            'phone' => $request->data['phone'],
+            'email' => $request->data['email'],
+            'password' => Hash::make($request->data['password']),
+        ]);
+
+        // Asignar rol con Spatie
+        $user->assignRole($request->data['role']);
+
+        // Crear pareja asociada
+        $partner = Partner::create([
+            'name' => $request->data['partnerName'],
+            'firstSurname' => $request->data['partnerFirstSurname'],
+            'secondSurname' => $request->data['partnerSecondSurname'],
+            'user_id' => $user->id,
+        ]);
+
+        // Confirmar transacción antes de enviar el correo
+        DB::commit();
+
+        // Generar token (si usas Sanctum)
+        $token = $user->createToken('AuthToken')->plainTextToken;
+
+        // Intentar enviar el correo SIN afectar la BD
+        try {
+            Mail::to(users: $user->email)->send(new WelcomeUserMail($user));
+            Mail::to('contacto@invited.es')->send(new AdminUserNotificationMail($user));
+        } catch (\Exception $e) {
+            \Log::error("Error al enviar el correo: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'message' => 'Usuario y Partner creados correctamente',
+            'user' => $user->load('roles'),
+            'token' => $token,
+        ], 201);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'error' => 'Error al crear los registros',
+            'details' => $e->getMessage(),
+        ], 500);
+    }
+}
 
 
     public function show($id)

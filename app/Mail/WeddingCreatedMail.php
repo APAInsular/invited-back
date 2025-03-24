@@ -35,13 +35,16 @@ class WeddingCreatedMail extends Mailable
     /**
      * Get the message content definition.
      */
-   
+
 
     public function build()
     {
         return $this->subject('¡Tu boda ha sido creada!')
             ->view('emails.wedding_created')
-            ->with(['wedding' => $this->wedding]);
+            ->with([
+                'wedding' => $this->wedding,
+                'qrUrl' => asset('storage/qr/qr.png')
+            ]);
     }
 
     /**
