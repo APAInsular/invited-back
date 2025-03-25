@@ -118,7 +118,6 @@ class RegisteredUserController extends Controller
                 'user' => $user,
                 // 'token' => $token,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
