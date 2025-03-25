@@ -89,8 +89,8 @@ class RegisteredUserController extends Controller
             ]);
 
             // Asignar rol con Spatie
-            $user->assignRole($request->data['role']);
-
+            // $user->assignRole($request->data['role']);
+       
             // Crear pareja asociada
             $partner = Partner::create([
                 'name' => $request->data['partnerName'],
