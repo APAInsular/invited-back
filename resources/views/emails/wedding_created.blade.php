@@ -76,8 +76,8 @@
             <p>Haz clic en el siguiente botón para pagar de forma rápida y segura a través de Revolut:</p>
             <a href="https://checkout.revolut.com/pay/5d724aa1-81fc-4a32-a2a6-a18c7395204b" class="button">Realizar pago online</a>
 
-            <h3>Pago mediante QR:</h3>
-            <img src="{{ Storage::url('qr/qr.png') }}" alt="Código QR">
+            {{-- <h3>Pago mediante QR:</h3>
+            <img src="{{ Storage::url('qr/qr.png') }}" alt="Código QR"> --}}
             <h3>🏦 Transferencia bancaria:</h3>
             <p>Si prefieres realizar el pago mediante transferencia, usa los siguientes datos:</p>
             <p><strong>🧾 Beneficiario:</strong> APA INSULAR SOCIEDAD LIMITADA</p>

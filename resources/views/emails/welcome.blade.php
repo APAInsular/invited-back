@@ -68,7 +68,7 @@
             <p>Estamos encantados de tenerte en nuestra plataforma. 🎉</p>
             <p>Explora, conecta y disfruta de la mejor experiencia con nosotros.</p>
             <p>Si necesitas ayuda, no dudes en contactarnos.</p>
-            <a href="{{ url('/') }}" class="button">Ir a la Plataforma</a>
+            <a href="https://invited.es" class="button">Ir a la Plataforma</a>
         </div>
         <div class="footer">
             <p>Saludos,</p>

@@ -59,22 +59,22 @@ class RegisteredUserController extends Controller
         \Log::info('reCAPTCHA token received: ' . $request->token);
 
         // Verificar reCAPTCHA
-        $secretKey = env('RECAPTCHA_SECRET_KEY');
-        try {
-            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => $secretKey,
-                'response' => $request->token,
-            ]);
+        // $secretKey = env('RECAPTCHA_SECRET_KEY');
+        // try {
+        //     $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        //         'secret' => $secretKey,
+        //         'response' => $request->token,
+        //     ]);
 
-            $result = $response->json();
+        //     $result = $response->json();
 
-            if (!$result['success'] || $result['score'] < 0.5) {
-                throw ValidationException::withMessages(['token' => ['reCAPTCHA verification failed.']]);
-            }
-        } catch (\Exception $e) {
-            \Log::error('reCAPTCHA verification error: ' . $e->getMessage());
-            throw ValidationException::withMessages(['token' => ['reCAPTCHA verification error.']]);
-        }
+        //     if (!$result['success'] || $result['score'] < 0.5) {
+        //         throw ValidationException::withMessages(['token' => ['reCAPTCHA verification failed.']]);
+        //     }
+        // } catch (\Exception $e) {
+        //     \Log::error('reCAPTCHA verification error: ' . $e->getMessage());
+        //     throw ValidationException::withMessages(['token' => ['reCAPTCHA verification error.']]);
+        // }
 
         DB::beginTransaction();
         try {
@@ -115,8 +115,8 @@ class RegisteredUserController extends Controller
 
             return response()->json([
                 'message' => 'Usuario y Partner creados correctamente',
-                'user' => $user->load('roles'),
-                'token' => $token,
+                'user' => $user,
+                // 'token' => $token,
             ], 201);
 
         } catch (\Exception $e) {
