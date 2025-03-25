@@ -28,6 +28,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('/couples', [RegisteredUserController::class, 'storeCouple']);
 
+Route::post('/contact', [ContactController::class, 'sendMessage']);
+
 // Rutas de autenticación
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'login']);
@@ -105,5 +107,3 @@ Route::get('/events/{id}', [EventController::class, 'getEvent']);
 Route::post('/events', [EventController::class, 'createEvent']);
 Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
-
-Route::post('/contact', [ContactController::class, 'sendMessage']);
