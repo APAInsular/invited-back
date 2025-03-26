@@ -170,8 +170,8 @@ class WeddingController extends Controller
             'location' => ['nullable', 'array'],
             'location.city' => ['nullable', 'string'],
             'location.country' => ['nullable', 'string'],
-            'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ]);
 
         DB::beginTransaction();
