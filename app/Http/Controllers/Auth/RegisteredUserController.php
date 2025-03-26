@@ -116,7 +116,7 @@ class RegisteredUserController extends Controller
             return response()->json([
                 'message' => 'Usuario y Partner creados correctamente',
                 'user' => $user,
-                // 'token' => $token,
+                'token' => $token,
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
