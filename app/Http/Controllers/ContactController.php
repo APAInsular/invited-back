@@ -37,7 +37,11 @@ class ContactController extends Controller
         }
 
 
-        $data = $request->only('formData.name', 'formData.email', 'formData.message');
+        $data = [
+            'name' => $request->input('formData.name'),
+            'email' => $request->input('formData.email'),
+            'message' => $request->input('formData.message'),
+        ];
 
         Mail::to('contacto@invited.es')->send(new ContactMessageMail($data));
 
