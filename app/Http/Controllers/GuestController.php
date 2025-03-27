@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\GuestAcceptedMail;
 use App\Models\Attendant;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Guest;
 use DB;
 use App\Models\Wedding;
+use Illuminate\Support\Facades\Http;
 use Mail;
 
 
@@ -162,6 +164,24 @@ class GuestController extends Controller
                         'updated_at' => now()
                     ]);
                 }
+            }
+
+
+            $secretKey = env('RECAPTCHA_SECRET_KEY');
+            try {
+                $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => $secretKey,
+                    'response' => $request->token,
+                ]);
+
+                $result = $response->json();
+
+                if (!$result['success'] || $result['score'] < 0.5) {
+                    throw ValidationException::withMessages(['token' => ['reCAPTCHA verification failed.']]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('reCAPTCHA verification error: ' . $e->getMessage());
+                throw ValidationException::withMessages(['token' => ['reCAPTCHA verification error.']]);
             }
 
 
