@@ -13,9 +13,9 @@ class ContactController extends Controller
     public function sendMessage(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'message' => 'required|string',
+            'formData.name' => 'required|string',
+            'formData.email' => 'required|email',
+            'formData.message' => 'required|string',
         ]);
 
         // Verificar reCAPTCHA
@@ -37,7 +37,7 @@ class ContactController extends Controller
         }
 
 
-        $data = $request->only('name', 'email', 'message');
+        $data = $request->only('formData.name', 'formData.email', 'formData.message');
 
         Mail::to('contacto@invited.es')->send(new ContactMessageMail($data));
 
