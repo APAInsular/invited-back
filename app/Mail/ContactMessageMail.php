@@ -38,7 +38,7 @@ class ContactMessageMail extends Mailable
         return $this->from('no-reply@invited.es')
             ->subject('Nuevo mensaje de contacto')
             ->view('emails.contact_message')
-            ->with('data', $this->data);
+            ->with('formData', $this->data);
     }
 
     /**
