@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Hash;
+use Hashids\Hashids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -31,6 +33,27 @@ class User extends Authenticatable
         // 'role',
     ];
 
+    // public function toArray()
+    // {
+    //     $hashids = new Hashids();
+    //     $array['id'] = $hashids->encode($this->id); // Reemplaza el id normal por el hasheado
+    //     $array['name'] = $this->name;
+    //     $array['firstSurname'] = $this->firstSurname;   
+    //     $array['secondSurname'] = $this->secondSurname;
+    //     $array['phone'] = $this->phone;
+    //     $array['email'] = $this->email;
+
+        
+    //     if (isset($array['related_model_id'])) {
+    //         $array['related_model_id'] = $hashids::encode($this->related_model_id);
+    //     }
+
+    //     return $array;
+    // }
+
+    // protected $appends = ['hashed_id'];
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -39,6 +62,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // 'id',
     ];
 
     /**

@@ -78,8 +78,16 @@
                 @if(!empty($wedding->dressCode))
                     <p><strong>👗 Código de vestimenta:</strong> {{ $wedding->dressCode }}</p>
                 @endif
+
+                @if(!empty($guest->extraInformation))
+                    <p><strong>💌 Mensaje del invitado:</strong> {{ $guest->extraInformation }}</p>
+                @else
+                    <p><strong>💌 El invitado no te ha dejado un mensaje.</strong></p>
+                @endif
+              
+                
             </div>
-            <a href="{{ url('/wedding/'.$wedding->id.'/guests') }}" class="button">Ver lista de invitados</a>
+            {{-- <a href="{{ url('/wedding/'.$wedding->id.'/guests') }}" class="button">Ver lista de invitados</a> --}}
         </div>
         <div class="footer">
             <p>¡Sigue disfrutando de la planificación de tu gran día! 💍✨</p>
