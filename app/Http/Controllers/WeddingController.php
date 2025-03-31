@@ -203,7 +203,7 @@ class WeddingController extends Controller
             // Subir la imagen de portada (coverImage)
             if ($request->hasFile('coverImage')) {
                 if ($request->file('coverImage')->isValid()) {
-                    $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
+                    $coverImagePath = $request->file('coverImage')->storePublicly('weddings/covers', 's3');
                     // Guardar la ruta de la imagen de portada en la base de datos
                     Image::create([
                         'wedding_id' => $wedding->id,
@@ -234,7 +234,7 @@ class WeddingController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     if ($image->isValid()) {
-                        $imagePath = $image->store('weddings/gallery', 'public');
+                        $imagePath = $image->storePublicly('weddings/gallery', 's3');
 
                         // Guardar la ruta de la imagen en la base de datos
                         Image::create([
