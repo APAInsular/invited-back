@@ -186,6 +186,13 @@ class WeddingController extends Controller
                 'country' => $request->location['country']
             ]);
 
+
+            $coverImageUrl = null;
+
+            if ($request->hasFile('coverImage') && $request->file('coverImage')->isValid()) {
+                $coverImagePath = $request->file('coverImage')->store('weddings/covers', 's3');
+                $coverImageUrl = Storage::disk('s3')->url($coverImagePath);
+            }
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
                 'user_id' => $request->user_id,
@@ -198,16 +205,10 @@ class WeddingController extends Controller
                 'guestCount' => $request->guestCount,
                 'customMessage' => $request->customMessage,
                 'location_id' => $weddingLocation->id,
-                'coverImage' => $request->coverImage ? $request->coverImage->store('weddings/covers', 'public') : null,
+                'coverImage' => $coverImageUrl,
             ]);
 
-            // Subir la imagen de portada (coverImage)
-            if ($request->hasFile('coverImage') && $request->file('coverImage')->isValid()) {
-                $coverImagePath = $request->file('coverImage')->store('weddings/covers', 's3');
 
-                // Si quieres una URL completa:
-                $coverImageUrl = Storage::disk('s3')->url($coverImagePath);
-            }
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
