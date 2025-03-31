@@ -202,15 +202,28 @@ class WeddingController extends Controller
 
             // Subir la imagen de portada (coverImage)
             if ($request->hasFile('coverImage')) {
-                if ($request->file('coverImage')->isValid()) {
-                    $coverImagePath = $request->file('coverImage')->storePublicly('weddings/covers', 's3');
-                    // Guardar la ruta de la imagen de portada en la base de datos
-                    Image::create([
-                        'wedding_id' => $wedding->id,
-                        'image' => $coverImagePath,
-                    ]);
-                } else {
-                    throw new \Exception('La imagen de portada no es válida');
+                $coverImagePath = $request->file('coverImage')->storePublicly('weddings/covers', 's3');
+                
+                // Guardar en la wedding (si tienes columna coverImage)
+                $wedding->update(['coverImage' => $coverImagePath]);
+            
+                // También en tabla de imágenes si lo manejas así
+                Image::create([
+                    'wedding_id' => $wedding->id,
+                    'image' => $coverImagePath,
+                ]);
+            }
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    if ($image->isValid()) {
+                        $imagePath = $image->storePublicly('weddings/gallery', 's3');
+            
+                        Image::create([
+                            'wedding_id' => $wedding->id,
+                            'image' => $imagePath,
+                        ]);
+                    }
                 }
             }
 
@@ -231,21 +244,7 @@ class WeddingController extends Controller
             }
 
             // Guardar imágenes en la galería
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $imagePath = $image->storePublicly('weddings/gallery', 's3');
-
-                        // Guardar la ruta de la imagen en la base de datos
-                        Image::create([
-                            'wedding_id' => $wedding->id,
-                            'image' => $imagePath,
-                        ]);
-                    } else {
-                        throw new \Exception('Una o más imágenes no son válidas');
-                    }
-                }
-            }
+            
 
             DB::commit();
             try {
