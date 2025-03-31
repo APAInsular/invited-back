@@ -205,7 +205,9 @@ class WeddingController extends Controller
                 'guestCount' => $request->guestCount,
                 'customMessage' => $request->customMessage,
                 'location_id' => $weddingLocation->id,
-                'coverImage' => $coverImageUrl,
+                'coverImage' => $request->hasFile('coverImage')
+                    ? $request->file('coverImage')->store('weddings/covers', 's3')
+                    : null,
             ]);
 
 
