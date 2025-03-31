@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'data.name' => ['required', 'string', 'max:255'],
             'data.firstSurname' => ['required', 'string', 'max:255'],
-            'data.secondSurname' => ['required', 'string', 'max:255'],
+            'data.secondSurname' => ['nullable', 'string', 'max:255'],
             'data.phone' => ['required', 'string', 'max:255'],
             'data.email' => [
                 'required',
@@ -53,7 +53,7 @@ class RegisteredUserController extends Controller
             'data.password' => ['required', 'confirmed', Rules\Password::defaults()],
             'data.partnerName' => ['required', 'string', 'max:255'],
             'data.partnerFirstSurname' => ['required', 'string', 'max:255'],
-            'data.partnerSecondSurname' => ['required', 'string', 'max:255'],
+            'data.partnerSecondSurname' => ['nullable', 'string', 'max:255'],
             'token' => ['required', 'string'],
         ]);
         \Log::info('reCAPTCHA token received: ' . $request->token);

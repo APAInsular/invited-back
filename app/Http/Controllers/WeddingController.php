@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AdminUserNotificationMail;
+use App\Mail\AdminWeddingNotificationMail;
 use App\Mail\WeddingCreatedMail;
 use App\Mail\WelcomeUserMail;
 use App\Models\Image;
@@ -14,6 +15,7 @@ use App\Models\Event;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use Mail;
+
 
 
 
@@ -160,6 +162,7 @@ class WeddingController extends Controller
             'template' => ['required', 'string', 'max:255'],
             'guestCount' => ['required', 'integer'],
             'customMessage' => ['required', 'string', 'max:255'],
+            'dressCode' => ['required', 'string', 'max:255'],
             'events' => ['required', 'array'],
             'events.*.name' => ['required', 'string', 'max:255'],
             'events.*.description' => ['nullable', 'string'],
@@ -167,9 +170,9 @@ class WeddingController extends Controller
             'events.*.location' => ['nullable', 'array'],
             'events.*.location.city' => ['nullable', 'string'],
             'events.*.location.country' => ['nullable', 'string'],
-            'location' => ['nullable', 'array'],
-            'location.city' => ['nullable', 'string'],
-            'location.country' => ['nullable', 'string'],
+            'location' => ['required', 'array'],
+            'location.city' => ['required', 'string'],
+            'location.country' => ['required', 'string'],
             'coverImage' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
             'images.*' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ]);
@@ -253,7 +256,8 @@ class WeddingController extends Controller
                 Mail::to($user->email)->send(new WeddingCreatedMail($wedding));
 
                 // Enviar correo de notificación al administrador
-                Mail::to(users: 'contacto@invited.es')->send(new WeddingCreatedMail($wedding));
+                $wedding->load('user', 'location');
+                Mail::to('contacto@invited.es')->send(new AdminWeddingNotificationMail($wedding));
 
                 if (count(Mail::failures()) > 0) {
                     throw new \Exception("Falló el envío de correos: " . implode(", ", Mail::failures()));
