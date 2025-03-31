@@ -87,7 +87,7 @@
               
                 
             </div>
-            {{-- <a href="{{ url('/wedding/'.$wedding->id.'/guests') }}" class="button">Ver lista de invitados</a> --}}
+            <a href="https://invited.es/login" class="button">Inicia sesión para más información</a>
         </div>
         <div class="footer">
             <p>¡Sigue disfrutando de la planificación de tu gran día! 💍✨</p>
