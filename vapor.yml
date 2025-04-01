@@ -10,9 +10,10 @@ environments:
     build:
       - 'composer install --no-dev --optimize-autoloader'
       - 'php artisan event:cache'
-      - 'php artisan storage:link'
     deploy:
+      - 'php artisan storage:link'
       - 'php artisan migrate --force'
+
     env:
       APP_ENV: production
       APP_DEBUG: false
