@@ -185,6 +185,22 @@ class WeddingController extends Controller
                 'country' => $request->location['country']
             ]);
 
+            $user = User::with('partner')->findOrFail($request->user_id);
+
+            // 2) Generar nombres de carpeta a partir de user->name y user->partner->name
+            // (Asegúrate de que la relación "partner" devuelva un objeto con "name")
+            $folderName = Str::slug($user->name . '-' . $user->partner->name) . '_' . time();
+            $weddingPath = "weddings/{$folderName}";
+
+            // Guardar imagen de portada
+            $coverImagePath = null;
+            if ($request->hasFile('coverImage') && $request->file('coverImage')->isValid()) {
+                // Guardará en la carpeta "weddings/<slug>/cover" con el disco "public"
+                $coverImagePath = $request->file('coverImage')->store("{$weddingPath}/cover", 'public');
+            }
+
+
+
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
                 'user_id' => $request->user_id,
@@ -200,19 +216,32 @@ class WeddingController extends Controller
                 'coverImage' => $request->coverImage ? $request->coverImage->store('weddings/covers', 'public') : null,
             ]);
 
-            // Subir la imagen de portada (coverImage)
-            if ($request->hasFile('coverImage')) {
-                if ($request->file('coverImage')->isValid()) {
-                    $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
-                    // Guardar la ruta de la imagen de portada en la base de datos
-                    Image::create([
-                        'wedding_id' => $wedding->id,
-                        'image' => $coverImagePath,
-                    ]);
-                } else {
-                    throw new \Exception('La imagen de portada no es válida');
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    if ($image->isValid()) {
+                        $imagePath = $image->store("{$weddingPath}/gallery", 'public');
+
+                        Image::create([
+                            'wedding_id' => $wedding->id,
+                            'image' => $imagePath,
+                        ]);
+                    }
                 }
             }
+            // Subir la imagen de portada (coverImage)
+            // if ($request->hasFile('coverImage')) {
+            //     if ($request->file('coverImage')->isValid()) {
+            //         $coverImagePath = $request->file('coverImage')->store('weddings/covers', 'public');
+            //         // Guardar la ruta de la imagen de portada en la base de datos
+            //         Image::create([
+            //             'wedding_id' => $wedding->id,
+            //             'image' => $coverImagePath,
+            //         ]);
+            //     } else {
+            //         throw new \Exception('La imagen de portada no es válida');
+            //     }
+            // }
 
             // Crear los eventos asociados a la boda
             foreach ($request->events as $eventData) {
@@ -231,21 +260,21 @@ class WeddingController extends Controller
             }
 
             // Guardar imágenes en la galería
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $imagePath = $image->store('weddings/gallery', 'public');
+            // if ($request->hasFile('images')) {
+            //     foreach ($request->file('images') as $image) {
+            //         if ($image->isValid()) {
+            //             $imagePath = $image->store('weddings/gallery', 'public');
 
-                        // Guardar la ruta de la imagen en la base de datos
-                        Image::create([
-                            'wedding_id' => $wedding->id,
-                            'image' => $imagePath,
-                        ]);
-                    } else {
-                        throw new \Exception('Una o más imágenes no son válidas');
-                    }
-                }
-            }
+            //             // Guardar la ruta de la imagen en la base de datos
+            //             Image::create([
+            //                 'wedding_id' => $wedding->id,
+            //                 'image' => $imagePath,
+            //             ]);
+            //         } else {
+            //             throw new \Exception('Una o más imágenes no son válidas');
+            //         }
+            //     }
+            // }
 
             DB::commit();
             try {

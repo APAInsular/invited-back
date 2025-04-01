@@ -31,6 +31,31 @@ class RegisteredUserController extends Controller
     {
         return response()->json(User::with('partner')->get(), 200);
     }
+
+    public function assingAdminRole($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        // Asignar rol de admin al usuario
+        $user->assignRole('admin');
+
+        return response()->json(['message' => 'Rol de admin asignado correctamente'], 200);
+    }
+    public function assingUserRole($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        // Asignar rol de user al usuario
+        $user->assignRole('user');
+
+        return response()->json(['message' => 'Rol de user asignado correctamente'], 200);
+    }
     public function store(Request $request)
     {
         $request->validate([
