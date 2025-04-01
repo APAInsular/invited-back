@@ -14,7 +14,9 @@ use App\Models\Wedding;
 use App\Models\Event;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Mail;
+
 
 
 
