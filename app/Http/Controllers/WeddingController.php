@@ -186,22 +186,22 @@ class WeddingController extends Controller
                 'city' => $request->location['city'],
                 'country' => $request->location['country']
             ]);
+            $user = User::with('partner')->findOrFail($request->input('user_id'));
 
-            $user = User::with('partner')->findOrFail($request->user_id);
-
-            // 2) Generar nombres de carpeta a partir de user->name y user->partner->name
-            // (Asegúrate de que la relación "partner" devuelva un objeto con "name")
+            // 3. Construir el nombre de carpeta (slug + timestamp)
             $folderName = Str::slug($user->name . '-' . $user->partner->name) . '_' . time();
             $weddingPath = "weddings/{$folderName}";
 
-            // Guardar imagen de portada
+            // 4. Guardar la imagen de portada en S3
             $coverImagePath = null;
+
             if ($request->hasFile('coverImage') && $request->file('coverImage')->isValid()) {
-                // Guardará en la carpeta "weddings/<slug>/cover" con el disco "public"
-                $coverImagePath = $request->file('coverImage')->store("{$weddingPath}/cover", 'public');
+                // Utiliza el disco "s3" para que Vapor maneje la conexión al bucket AWS.
+                $coverImagePath = Storage::disk('s3')->putFile(
+                    "{$weddingPath}/cover",
+                    $request->file('coverImage')
+                );
             }
-
-
 
             // Crear la boda con los datos validados
             $wedding = Wedding::create([
@@ -215,7 +215,7 @@ class WeddingController extends Controller
                 'guestCount' => $request->guestCount,
                 'customMessage' => $request->customMessage,
                 'location_id' => $weddingLocation->id,
-                'coverImage' => $coverImagePath, 
+                'coverImage' => $coverImagePath,
             ]);
 
 
