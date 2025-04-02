@@ -221,13 +221,17 @@ class WeddingController extends Controller
 
 
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $imagePath = $image->store("{$weddingPath}/gallery", 'public');
+                foreach ($request->file('images') as $imageFile) {
+                    if ($imageFile->isValid()) {
+                        $galleryImagePath = Storage::disk('s3')->putFile(
+                            "{$weddingPath}/gallery",
+                            $imageFile
+                        );
 
+                        // Guardar la ruta en tu tabla "images" (o la que uses)
                         Image::create([
                             'wedding_id' => $wedding->id,
-                            'image' => $imagePath,
+                            'image' => $galleryImagePath,
                         ]);
                     }
                 }
