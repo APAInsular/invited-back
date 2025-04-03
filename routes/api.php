@@ -24,8 +24,16 @@ use App\Http\Controllers\GuestController;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user()->with('partner');
+    // 1) Obtener el usuario actual (Modelo, no Builder)
+    $user = $request->user();
+
+    // 2) Cargar la relación "partner" en ese usuario
+    $user->load('partner');
+
+    // 3) Devolver el modelo con la relación cargada
+    return $user;
 });
+
 Route::post('/couples', [RegisteredUserController::class, 'storeCouple']);
 
 Route::post('/contact', [ContactController::class, 'sendMessage']);
