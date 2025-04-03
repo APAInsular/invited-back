@@ -44,7 +44,7 @@ Route::get('user/{id}/weddings', [WeddingController::class, 'getUserWeddings']);
 
 
 // CRUD de bodas y eventos
-Route::get('/weddings', [WeddingController::class, 'index']); // Listar todas las bodas
+// Route::get('/weddings', [WeddingController::class, 'index']); // Listar todas las bodas
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/weddings', [WeddingController::class, 'store']);
 });
@@ -92,7 +92,6 @@ Route::put('/guests/{id}', [GuestController::class, 'update']);
 Route::delete('/wedding/{wedding_id}/guest/{guest_id}', [GuestController::class, 'deleteGuest']);
 
 // Rutas para Attendants
-Route::get('/attendants', [AttendantController::class, 'index']);
 Route::post('/attendants', [AttendantController::class, 'store']);
 Route::get('/attendants/{id}', [AttendantController::class, 'show']);
 Route::put('/attendants/{id}', [AttendantController::class, 'update']);
@@ -107,3 +106,26 @@ Route::get('/events/{id}', [EventController::class, 'getEvent']);
 Route::post('/events', [EventController::class, 'createEvent']);
 Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
+
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Bodas
+    Route::get('/weddings', [WeddingController::class, 'index']);
+    Route::get('/weddings/{id}', [WeddingController::class, 'show']);
+    Route::put('/weddings/{id}', [WeddingController::class, 'update']);
+    Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']);
+
+    // Usuarios
+    Route::get('/users', [RegisteredUserController::class, 'index']);
+    Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']);
+    // etc...
+
+    //Attendants
+    Route::get('/attendants', [AttendantController::class, 'index']);
+
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Otras rutas...
+    Route::get('/user/is-admin', [AuthenticatedSessionController::class, 'checkIfAdmin']);
+});

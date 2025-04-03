@@ -52,4 +52,18 @@ class AuthenticatedSessionController extends Controller
 
         return response()->json(['message' => 'Cierre de sesión exitoso']);
     }
+
+    public function checkIfAdmin(Request $request)
+    {
+        // El usuario actual llega a través de $request->user()
+        $user = $request->user();
+
+        // Determinar si tiene el rol admin, usando Spatie
+        $isAdmin = $user->hasRole('admin');
+
+        // Retornar un JSON con la respuesta
+        return response()->json([
+            'isAdmin' => $isAdmin
+        ], 200);
+    }
 }
