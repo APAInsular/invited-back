@@ -166,7 +166,16 @@ class WeddingController extends Controller
             'guestCount' => ['required', 'integer'],
             'customMessage' => ['required', 'string', 'max:255'],
             'dressCode' => ['required', 'string', 'max:255'],
-            'events' => ['required', 'array'],
+            'events' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Validación personalizada para 'unique'
+                    if (empty($value) || count($value) === 0) {
+                        $fail('Debes añadir al menos un evento.');
+                    }
+                },
+            ],
             'events.*.name' => ['required', 'string', 'max:255'],
             'events.*.description' => ['nullable', 'string'],
             'events.*.time' => ['required', 'date_format:H:i'],
