@@ -87,6 +87,7 @@ Route::post('/events', [EventController::class, 'createEvent']);
 Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
 
+Route::get('/users', [RegisteredUserController::class, 'index']);
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Bodas
@@ -96,7 +97,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']);
 
     // Usuarios
-    Route::get('/users', [RegisteredUserController::class, 'index']);
     Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']);
     // etc...
 
@@ -104,7 +104,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/attendants', [AttendantController::class, 'index']);
 
     // Users
-    Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas
 
 });
 
