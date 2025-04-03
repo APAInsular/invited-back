@@ -167,7 +167,6 @@ class WeddingController extends Controller
             'customMessage' => ['required', 'string', 'max:255'],
             'dressCode' => ['required', 'string', 'max:255'],
             'events' => [
-                'required',
                 'array',
                 function ($attribute, $value, $fail) use ($request) {
                     // Validación personalizada para 'unique'
