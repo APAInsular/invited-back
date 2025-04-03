@@ -62,7 +62,17 @@ class RegisteredUserController extends Controller
             'data.name' => ['required', 'string', 'max:255'],
             'data.firstSurname' => ['required', 'string', 'max:255'],
             'data.secondSurname' => ['nullable', 'string', 'max:255'],
-            'data.phone' => ['required', 'string', 'max:255'],
+            'data.phone' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Validación personalizada para 'unique'
+                    if (User::where('phone', $request->data['phone'])->exists()) {
+                        $fail('El número de teléfono ya está en uso.');
+                    }
+                },
+            ],
             'data.email' => [
                 'required',
                 'string',
@@ -115,7 +125,7 @@ class RegisteredUserController extends Controller
 
             // Asignar rol con Spatie
             // $user->assignRole($request->data['role']);
-       
+
             // Crear pareja asociada
             $partner = Partner::create([
                 'name' => $request->data['partnerName'],
