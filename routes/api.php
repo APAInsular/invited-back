@@ -24,7 +24,7 @@ use App\Http\Controllers\GuestController;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->with('partner');
 });
 Route::post('/couples', [RegisteredUserController::class, 'storeCouple']);
 
@@ -35,7 +35,6 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'login']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth:sanctum');
 
-Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas
 Route::post('/users', [RegisteredUserController::class, 'store']); // Crear un usuario con su pareja
 Route::get('/users/{id}', [RegisteredUserController::class, 'show']); // Obtener un usuario por ID
 Route::put('/users/{id}', [RegisteredUserController::class, 'updateUser']); // Actualizar un usuario y su pareja
@@ -55,33 +54,6 @@ Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']); // Elimi
 Route::get('/weddings/{id}/full-info', [WeddingController::class, 'getFullWeddingInfo']);
 Route::get('/weddings/{id}/info-without-guests', [WeddingController::class, 'getInfoWithoutGuests']);
 Route::get('wedding/{id}/invitados', [GuestController::class, 'getWeddingGuests']);
-
-
-// Rutas protegidas por autenticación
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        $user = Auth::user(); // Obtener el usuario autenticado
-
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
-        }
-
-        return response()->json($user->load('partner'), 200);
-    });
-
-    // Rutas protegidas por rol
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return response()->json(['message' => 'Bienvenido, Admin']);
-        });
-    });
-
-    Route::middleware(['role:company'])->group(function () {
-        Route::get('/editor/dashboard', function () {
-            return response()->json(['message' => 'Bienvenido, Empresa']);
-        });
-    });
-});
 
 
 // Rutas para Guests
@@ -122,6 +94,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     //Attendants
     Route::get('/attendants', [AttendantController::class, 'index']);
+
+    // Users
+    Route::get('/users', [RegisteredUserController::class, 'index']); // Obtener todos los usuarios con sus parejas
 
 });
 
