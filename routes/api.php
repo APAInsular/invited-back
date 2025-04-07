@@ -93,7 +93,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Bodas
     Route::get('/weddings', [WeddingController::class, 'index']);
     Route::get('/weddings/{id}', [WeddingController::class, 'show']);
-    Route::put('/weddings/{id}', [WeddingController::class, 'update']);
+    Route::put('/weddings/{id}', [WeddingController::class, 'updateWedding']);
     Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']);
     Route::delete('/images/{id}', [ImageController::class, 'destroy']);
 
