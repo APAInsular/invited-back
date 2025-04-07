@@ -88,9 +88,6 @@ Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
 
 
-Route::get('/users', [RegisteredUserController::class, 'index']);
-
-
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Bodas
     Route::get('/weddings', [WeddingController::class, 'index']);
@@ -106,6 +103,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/attendants', [AttendantController::class, 'index']);
 
     // Users
+    Route::get('/users', [RegisteredUserController::class, 'index']);
 
 });
 
