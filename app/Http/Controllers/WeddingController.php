@@ -27,7 +27,7 @@ class WeddingController extends Controller
     public function index()
     {
         // Obtener todas las bodas con sus eventos
-        return response()->json(Wedding::with('events', 'user.partner', )->get(), 200);
+        return response()->json(Wedding::with('events', 'user.partner','images','location','events.location' )->get(), 200);
     }
 
 

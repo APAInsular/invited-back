@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ImageController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +95,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/weddings/{id}', [WeddingController::class, 'show']);
     Route::put('/weddings/{id}', [WeddingController::class, 'update']);
     Route::delete('/weddings/{id}', [WeddingController::class, 'destroy']);
+    Route::delete('/images/{id}', [ImageController::class, 'destroy']);
+
 
     // Usuarios
     Route::delete('/users/{id}', [RegisteredUserController::class, 'destroy']);
