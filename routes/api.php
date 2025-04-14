@@ -88,6 +88,8 @@ Route::post('/events', [EventController::class, 'createEvent']);
 Route::put('/events/{id}', [EventController::class, 'updateEvent']);
 Route::delete('/events/{id}', [EventController::class, 'deleteEvent']);
 
+Route::post('/weddings/{weddingId}/images', [ImageController::class, 'addGalleryImages']);
+
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Bodas
