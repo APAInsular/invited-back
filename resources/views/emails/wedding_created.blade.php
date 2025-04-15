@@ -71,10 +71,10 @@
                 <p><strong>👥 Número de invitados:</strong> {{ $wedding->guestCount }}</p>
             </div>
             <p>Puedes realizar el pago de tres maneras:</p>
-
+            <p>¡¡Aprovecha este increíble descuento de un 15% hasta el 30 de mayo!!</p>
             <h3>💳 Pago online:</h3>
             <p>Haz clic en el siguiente botón para pagar de forma rápida y segura a través de Revolut:</p>
-            <a href="https://checkout.revolut.com/pay/5d724aa1-81fc-4a32-a2a6-a18c7395204b" class="button">Realizar pago online</a>
+            <a href="https://checkout.revolut.com/pay/be4caade-33d3-44c9-8b0a-04d207c7c6f3" class="button">Realizar pago online</a>
 
             {{-- <h3>Pago mediante QR:</h3>
             <img src="{{ Storage::url('qr/qr.png') }}" alt="Código QR"> --}}
