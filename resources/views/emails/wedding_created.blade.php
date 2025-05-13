@@ -70,7 +70,7 @@
                 <p><strong>📍 Ubicación:</strong> {{ $wedding->location['city'] ?? 'No especificada' }}, {{ $wedding->location['country'] ?? 'No especificada' }}</p>
                 <p><strong>👥 Número de invitados:</strong> {{ $wedding->guestCount }}</p>
             </div>
-            <p>Puedes realizar el pago de tres maneras:</p>
+            <p>Puedes realizar el pago de dos maneras:</p>
             <p>¡¡Aprovecha este increíble descuento de un 15% hasta el 30 de mayo!!</p>
             <h3>💳 Pago online:</h3>
             <p>Haz clic en el siguiente botón para pagar de forma rápida y segura a través de Revolut:</p>
